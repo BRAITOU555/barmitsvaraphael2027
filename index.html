@@ -607,7 +607,14 @@ const FW=(()=>{
     const f=AC.createBiquadFilter();f.type="highpass";f.frequency.value=hp;
     const g=AC.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+.05);
     c.connect(f);f.connect(g);out(g,true);c.start(t)}
+  let sample=null;
+  function loadSample(){ if(sample||!AC) return; fetch("boom.mp3").then(r=>r.arrayBuffer()).then(b=>AC.decodeAudioData(b,d=>{sample=d},()=>{})).catch(()=>{}) }
   function boom(vol){ if(!AC) return; const t=AC.currentTime;
+    if(sample){ const v=Math.min(1,vol*1.8);
+      for(let k=0;k<1+(Math.random()<.35?1:0);k++){
+        const src=AC.createBufferSource(); src.buffer=sample; src.playbackRate.value=.85+Math.random()*.4;
+        const g=AC.createGain(); g.gain.value=v*(k?0.6:1); src.connect(g); out(g,true); src.start(t+k*(.08+Math.random()*.12)); }
+      return; }
     pop(t,vol*1.6,1200);                                   // claquement sec
     const n=AC.createBufferSource();n.buffer=noise(1.6);   // grondement
     const f=AC.createBiquadFilter();f.type="lowpass";f.frequency.setValueAtTime(1800,t);f.frequency.exponentialRampToValueAtTime(90,t+1.2);
@@ -646,7 +653,7 @@ const FW=(()=>{
     if(running||rockets.length||parts.length) requestAnimationFrame(frame); else cx.clearRect(0,0,W,H);
   }
   return {
-    unlock(){ const a=audio(); if(a&&a.state==="suspended") a.resume() },
+    unlock(){ const a=audio(); if(a&&a.state==="suspended") a.resume(); loadSample() },
     show(ms){
       if(running) return; running=true; this.unlock();
       petards(14);
