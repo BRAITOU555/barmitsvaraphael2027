@@ -599,8 +599,8 @@ if(CONFIG.musique){
   };
 }
 function startMusic(){ if(!bgm) return;
-  const go=()=>{ $("snd").classList.remove("muted"); let v=0; const iv=setInterval(()=>{ v=Math.min(.6,v+.04); bgm.volume=v; if(v>=.6) clearInterval(iv) },100) };
-  if(bgm.paused){ bgm.volume=0; bgm.play().then(go).catch(()=>$("snd").classList.add("muted")) } else go(); }
+  const go=()=>{ bgm.muted=false; $("snd").classList.remove("muted"); let v=0; const iv=setInterval(()=>{ v=Math.min(.6,v+.04); bgm.volume=v; if(v>=.6) clearInterval(iv) },100) };
+  if(bgm.paused){ bgm.muted=false; bgm.volume=0; bgm.play().then(go).catch(()=>$("snd").classList.add("muted")) } else go(); }
 $("snd").classList.add("muted");
 
 
@@ -708,7 +708,7 @@ function openInvite(){
   const sc=$("scene");
   FW.unlock();
   sc.classList.add("open");              // rabat s'ouvre, la carte sort
-  if(bgm){ bgm.volume=0; bgm.play().catch(()=>{}); }   // démarre en silence (autorisé par le clic), le son monte après les feux
+  if(bgm){ bgm.muted=true; bgm.volume=0; bgm.play().catch(()=>{}); }   // démarre en silence (autorisé par le clic), le son monte après les feux
   setTimeout(()=>sc.classList.add("out"),2500);      // l'enveloppe disparaît
   setTimeout(()=>sc.classList.add("flipped"),3700);  // la carte se retourne
   setTimeout(()=>{ $("intro").classList.add("night"); FW.show(3300); },5100);   // nuit + feu d'artifice juste avant l'ouverture
