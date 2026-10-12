@@ -72,7 +72,7 @@ body.locked{overflow:hidden}
 .face::before{border:2px solid transparent!important;border-radius:3px!important;background:linear-gradient(135deg,#f6dc94,#b98a35 45%,#f3d98c 70%,#a87a2a) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0)}
 .face::after{border:1px solid #f4dfa6!important}
 .face .corner{border-color:#c79a3b!important;width:24px!important;height:24px!important;border-width:2px!important}
-.confetti{position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:3px;overflow:hidden;
+.confetti{display:none;position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:3px;overflow:hidden;
  background:
   radial-gradient(circle at 12% 22%,#e85d75 0 3px,transparent 3.5px),
   radial-gradient(circle at 88% 18%,#2f80d1 0 3px,transparent 3.5px),
@@ -257,7 +257,7 @@ body.shown .snd.ok{display:grid}
   radial-gradient(circle at 20% 88%,rgba(224,71,95,.17),transparent 40%),
   radial-gradient(circle at 88% 84%,rgba(24,165,143,.17),transparent 40%),
   linear-gradient(180deg,#fff 0,#fff8ea 100%);position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+.hero::before{display:none;content:"";position:absolute;inset:0;pointer-events:none;
  background:
   radial-gradient(circle at 10% 30%,#e0475f 0 4px,transparent 5px),radial-gradient(circle at 86% 12%,#2457b8 0 4px,transparent 5px),
   radial-gradient(circle at 24% 8%,#f08a24 0 3px,transparent 4px),radial-gradient(circle at 92% 46%,#18a58f 0 4px,transparent 5px),
