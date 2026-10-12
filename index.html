@@ -170,9 +170,19 @@ main.show{opacity:1}
 .pensee{max-width:560px;margin:0 auto;padding:70px 24px 10px;text-align:center;border-top:1px solid var(--line)}
 .pensee .txt{font-style:italic;font-size:1.25rem;line-height:1.9;color:var(--muted);margin:14px 0 18px}
 .pensee .nm{font-size:clamp(2rem,7vw,2.6rem);line-height:1.5;color:var(--gold)}
+.mazal{max-width:560px;margin:0 auto;padding:80px 24px 20px;text-align:center;border-top:1px solid var(--line)}
+.mazal .heb{font-family:'Frank Ruhl Libre',serif;font-size:clamp(2.6rem,10vw,3.6rem);color:var(--gold);line-height:1.3}
+.mazal .tov{font-size:clamp(2.6rem,10vw,3.8rem);color:var(--ink);line-height:1.2;margin-top:4px}
+.mazal .vx{font-style:italic;font-size:1.3rem;line-height:1.9;color:var(--muted);margin-top:16px}
 footer{padding:60px 24px 90px;text-align:center;max-width:620px;margin:0 auto}
 footer .script{font-size:2.2rem;color:var(--gold)}
 
+.snd{position:fixed;right:18px;bottom:18px;z-index:45;width:50px;height:50px;border-radius:50%;border:1px solid var(--gold-soft);background:rgba(255,255,255,.95);color:var(--gold-deep);display:none;place-items:center;cursor:pointer;box-shadow:0 8px 22px -8px rgba(80,60,20,.4)}
+body.shown .snd.ok{display:grid}
+.snd svg{width:22px;height:22px}
+.snd .off{display:none}
+.snd.muted .on{display:none}
+.snd.muted .off{display:block}
 .rv{opacity:0;transform:translateY(22px);transition:opacity 1s ease,transform 1s ease}
 .rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){*{transition-duration:.01s!important;transition-delay:0s!important}}
@@ -191,6 +201,7 @@ const CONFIG = {
   dates: "3 mai & 30 mai 2027",
   // Adresse qui reçoit les réponses (voir README). Vide = mode test (rien n'est enregistré).
   rsvpEndpoint: "",
+  musique: "musique.mp3",                 // fichier de la chanson (dans le même dossier)
   verset: {heb:"שמע בני מוסר אביך ואל תטש תורת אמך", fr:"Écoute, mon fils, l’instruction de ton père, et ne délaisse pas l’enseignement de ta mère.", ref:"Proverbes 1, 8"},
   pensee: {avant:"En ce jour si spécial, nos pensées vont vers", noms:["Denis et Danielle Mouly"], apres:"Leur amour et leurs souvenirs illuminent notre célébration."},
   evenements: [
@@ -265,6 +276,11 @@ const ART = {
   <button class="tap" id="openBtn">Ouvrir l'invitation</button>
 </div>
 
+<button class="snd" id="snd" aria-label="Activer ou couper la musique" type="button">
+  <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+  <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+</button>
+
 <header class="bar">
   <span class="mono script">R</span>
   <div class="mini" id="mini"></div>
@@ -314,6 +330,7 @@ const ART = {
 
     <div class="thanks" id="thanks">
       <div class="t1 script">Merci !</div>
+      <div class="heb" style="font-family:'Frank Ruhl Libre',serif;font-size:1.8rem;color:var(--gold);margin-top:2px">מזל טוב</div>
       <p id="thanksTxt">Votre réponse a bien été enregistrée.</p>
       <div class="recap" id="recap"></div>
       <div class="test" id="testNote" style="display:none">Mode test : cette réponse n'a pas été envoyée</div>
@@ -322,6 +339,12 @@ const ART = {
   </section>
 
   <section class="pensee rv" id="pensee"></section>
+
+  <section class="mazal rv">
+    <div class="heb">מזל טוב</div>
+    <div class="tov script">Mazal Tov !</div>
+    <p class="vx">Que cette belle étape dans la vie de Raphaël soit remplie de joie, de lumière et de bénédictions, et qu’il nous apporte, ainsi qu’à toute la famille, beaucoup de fierté et de bonheur.</p>
+  </section>
 
   <footer class="rv">
     <div class="dia"><i></i></div>
@@ -425,12 +448,28 @@ $("rsvpForm").addEventListener("submit", async ev=>{
 });
 $("editBtn").onclick = ()=>{ $("thanks").classList.remove("show"); $("rsvpForm").style.display = ""; };
 
+/* ---------- Musique ---------- */
+let bgm = null;
+if(CONFIG.musique){
+  bgm = new Audio(CONFIG.musique); bgm.loop = true; bgm.volume = .6; bgm.preload = "none";
+  bgm.addEventListener("error",()=>{ $("snd").classList.remove("ok"); bgm = null; });
+  $("snd").classList.add("ok");
+  $("snd").onclick = ()=>{
+    if(!bgm) return;
+    if(bgm.paused){ bgm.play().catch(()=>{}); $("snd").classList.remove("muted"); }
+    else { bgm.pause(); $("snd").classList.add("muted"); }
+  };
+}
+function startMusic(){ if(bgm){ bgm.play().then(()=>$("snd").classList.remove("muted")).catch(()=>$("snd").classList.add("muted")); } }
+$("snd").classList.add("muted");
+
 /* ---------- Ouverture ---------- */
 let opened = false;
 function openInvite(){
   if(opened) return; opened = true;
   $("intro").classList.add("opening");
   $("scene").classList.add("open");
+  startMusic();
   setTimeout(()=>{
     $("intro").classList.add("gone");
     document.body.classList.remove("locked");
