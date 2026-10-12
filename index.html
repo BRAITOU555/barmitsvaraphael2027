@@ -538,6 +538,30 @@ body.go #intro.opening .tap{animation:none}
 #pro .tas.t1{left:0;transform:none}#pro .tas.t2{left:33.4%}#pro .tas.t3{left:66.7%}#pro .tas.t4{left:100%;transform:translateX(-100%)}
 #pro.open.vid .tas{transform:translateY(-300px)}
 #pro .gate .gtxt{color:#f6dc94}
+
+/* ===== Rideau n°4 : satin bleu nuit, tringle dorée, sobre et élégant ===== */
+#pro{--cd:#050d26;--cm:#0f2358;--cl:#2d56a8;--g1:#f3dc98;--g2:#b8913e}
+#pro .pelmet,#pro .pelmet-trim,#pro .tas,#pro .tie{display:none!important}
+#pro .par{width:51%;overflow:hidden;clip-path:none!important;transition:transform 3.2s cubic-bezier(.6,0,.25,1)!important}
+#pro .par.pl{left:0;transform-origin:0 50%}#pro .par.pr{right:0;transform-origin:100% 50%}
+#pro .par .orn{width:196%;background:
+  repeating-linear-gradient(90deg,rgba(2,6,22,.55) 0,rgba(2,6,22,.12) 26px,rgba(255,255,255,0) 48px,rgba(170,200,255,.26) 78px,rgba(255,255,255,0) 108px,rgba(2,6,22,.14) 130px,rgba(2,6,22,.55) 156px),
+  linear-gradient(180deg,rgba(255,255,255,.10) 0,rgba(255,255,255,0) 30%,rgba(0,0,12,.10) 75%,rgba(0,0,12,.45) 100%),
+  linear-gradient(90deg,var(--cd),var(--cm) 38%,var(--cl) 50%,var(--cm) 62%,var(--cd))}
+#pro .par .orn::before{content:"";position:absolute;left:0;right:0;top:36px;height:20px;background:repeating-radial-gradient(circle at 15px 10px,transparent 0 7px,var(--g1) 7px 9px,transparent 9px 30px);opacity:.0}
+#pro .par .fr{height:2px;background:linear-gradient(90deg,transparent,var(--g1),transparent);bottom:14px;-webkit-mask:none;mask:none}
+#pro .par .fr::before{display:none}
+#pro .par::after{display:block!important;width:10px;background:linear-gradient(90deg,rgba(0,0,10,.5),transparent);box-shadow:none}
+#pro .par.pl::after{right:-10px;left:auto}#pro .par.pr::after{left:-10px;right:auto;transform:scaleX(-1)}
+#pro.open .par.pl{transform:scaleX(.13)!important}
+#pro.open .par.pr{transform:scaleX(.13)!important}
+#pro .rod{position:absolute;left:0;right:0;top:34px;height:9px;z-index:9;pointer-events:none;background:linear-gradient(180deg,#fff2c4,var(--g2) 55%,#7a5a1c);box-shadow:0 4px 8px rgba(0,0,0,.45);transition:opacity .9s ease .1s}
+#pro .rod::before,#pro .rod::after{content:"";position:absolute;top:-6px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6d0,var(--g2) 60%,#6a4a12)}
+#pro .rod::before{left:-4px}#pro .rod::after{right:-4px}
+#pro .rings{position:absolute;left:0;right:0;top:25px;height:30px;z-index:8;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 17px,var(--g1) 17px 20px,transparent 20px 30px);-webkit-mask:linear-gradient(180deg,#000 0 100%);opacity:.0}
+#pro.vid .rod{opacity:0}
+#pro .gate{padding-bottom:12vh}
+#pro .gate .gtxt{color:var(--g1);letter-spacing:.4em;font-size:.68rem;text-shadow:0 1px 8px rgba(0,0,0,.6)}
 </style>
 </head>
 <body class="locked">
@@ -612,7 +636,7 @@ const ART = {
   <div class="flash"></div>
   <div class="par pl"><div class="orn"><div class="fr"></div></div></div>
   <div class="par pr"><div class="orn"><div class="fr"></div></div></div>
-  <div class="pelmet-trim"></div><i class="tas t1"></i><i class="tas t2"></i><i class="tas t3"></i><i class="tas t4"></i><div class="pelmet"></div><div class="tie tl"></div><div class="tie tr"></div>
+  <div class="rod"></div><div class="pelmet-trim"></div><i class="tas t1"></i><i class="tas t2"></i><i class="tas t3"></i><i class="tas t4"></i><div class="pelmet"></div><div class="tie tl"></div><div class="tie tr"></div>
   <div class="cur cl"></div><div class="cur cr"></div>
   <button class="gate" id="proGate" type="button" aria-label="Ouvrir">
     <span class="gbsd">בס״ד</span><span class="gseal">R</span><span class="gtxt">Touchez pour entrer</span>
@@ -968,7 +992,7 @@ const FW=(()=>{
     vid.muted=false; vid.volume=1;
     const p=vid.play(); if(p&&p.then) p.then(()=>{ vid.pause(); vid.currentTime=0 }).catch(()=>{});   // autorisation du son par le geste
     setTimeout(()=>{ pro.classList.add("vid","play");
-      vid.muted=false; vid.volume=1; vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) },2900); };
+      vid.muted=false; vid.volume=1; vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) },3600); };
 })();
 
 /* ---------- Ouverture ---------- */
