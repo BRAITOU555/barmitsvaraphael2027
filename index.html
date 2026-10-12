@@ -247,6 +247,45 @@ body.shown .snd.ok{display:grid}
 .rv{opacity:0;transform:translateY(22px);transition:opacity 1s ease,transform 1s ease}
 .rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){*{transition-duration:.01s!important;transition-delay:0s!important}}
+
+/* ===== Intérieur coloré ===== */
+:root{--c-blue:#2457b8;--c-rose:#e0475f;--c-teal:#18a58f;--c-orange:#f08a24}
+.hero{background:
+  radial-gradient(circle at 12% 16%,rgba(240,138,36,.20),transparent 38%),
+  radial-gradient(circle at 90% 22%,rgba(36,87,184,.18),transparent 40%),
+  radial-gradient(circle at 20% 88%,rgba(224,71,95,.17),transparent 40%),
+  radial-gradient(circle at 88% 84%,rgba(24,165,143,.17),transparent 40%),
+  linear-gradient(180deg,#fff 0,#fff8ea 100%);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+ background:
+  radial-gradient(circle at 10% 30%,#e0475f 0 4px,transparent 5px),radial-gradient(circle at 86% 12%,#2457b8 0 4px,transparent 5px),
+  radial-gradient(circle at 24% 8%,#f08a24 0 3px,transparent 4px),radial-gradient(circle at 92% 46%,#18a58f 0 4px,transparent 5px),
+  radial-gradient(circle at 6% 66%,#2457b8 0 3px,transparent 4px),radial-gradient(circle at 80% 90%,#e0475f 0 4px,transparent 5px),
+  radial-gradient(circle at 30% 94%,#18a58f 0 3px,transparent 4px),radial-gradient(circle at 60% 6%,#e0475f 0 3px,transparent 4px),
+  radial-gradient(circle at 94% 70%,#f08a24 0 3px,transparent 4px),radial-gradient(circle at 14% 50%,#18a58f 0 3px,transparent 4px);animation:drift 6s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translateY(0)}to{transform:translateY(10px)}}
+.hero .names,.intro-txt .kid{background:linear-gradient(100deg,#7a5210,#c48a25 35%,#e8bd4f 55%,#a8741a 80%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding:0 .1em}
+.hero .heb,.verse .heb{color:var(--c-blue)}
+.event h2,.rsvp h2,.rq h3{color:var(--c-blue)}
+.event .place,.rsvp .who{color:var(--c-rose)}
+.event{position:relative;border-top:0;clip-path:inset(0 -100vmax)}
+.event:nth-of-type(odd){box-shadow:0 0 0 100vmax #f2f7ff}
+.event:nth-of-type(even){box-shadow:0 0 0 100vmax #fff3ee}
+.event::before{content:"";display:block;height:5px;width:120px;margin:0 auto 34px;border-radius:5px;background:linear-gradient(90deg,var(--c-rose),var(--c-orange),var(--c-teal),var(--c-blue))}
+.art{border:0;background:#fff;box-shadow:0 18px 40px -18px rgba(36,87,184,.35)}
+.art>div{border:2px solid #f0c24f}
+.pill{border-color:var(--c-blue);color:var(--c-blue)}
+.pill:hover{background:var(--c-blue);color:#fff}
+.pill i{background:var(--c-orange)}
+.rsvp{background:linear-gradient(180deg,#fff9e8,#fff);border-top:0;position:relative;clip-path:inset(0 -100vmax);box-shadow:0 0 0 100vmax #fff9e8}
+.rq{border:2px solid #f3d98c;background:#fff;box-shadow:0 12px 28px -20px rgba(36,87,184,.4)}
+.opt:not(.no){border-color:var(--c-teal);color:var(--c-teal)}
+.opt.no{border-color:#e0a0aa;color:var(--c-rose)}
+.opt:not(.no).on{background:var(--c-teal);border-color:var(--c-teal);color:#fff}
+.opt.on.no{background:var(--c-rose);border-color:var(--c-rose);color:#fff}
+.step{border-color:var(--c-teal)}.step button{background:#e4f6f2;color:var(--c-teal)}
+.mazal{background:linear-gradient(180deg,#fff,#fff0f3 55%,#eef4ff)}
+#fw{position:fixed;inset:0;width:100%;height:100%;z-index:70;pointer-events:none}
 </style>
 </head>
 <body class="locked">
@@ -312,6 +351,7 @@ const ART = {
 };
 </script>
 
+<canvas id="fw"></canvas>
 <div id="intro">
   <div class="bsd">בס״ד</div>
   <div class="inv script">Invitation</div>
@@ -537,12 +577,71 @@ if(CONFIG.musique){
 function startMusic(){ if(bgm){ bgm.play().then(()=>$("snd").classList.remove("muted")).catch(()=>$("snd").classList.add("muted")); } }
 $("snd").classList.add("muted");
 
+
+/* ---------- Feu d'artifice + bruitage (synthétisé) ---------- */
+const FW=(()=>{
+  const cv=$("fw"), cx=cv.getContext("2d"); let W,H,dpr=Math.min(2,window.devicePixelRatio||1);
+  function size(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
+  size(); addEventListener("resize",size);
+  const COL=["#e0475f","#2457b8","#f08a24","#18a58f","#e8b630","#a23bd1","#ff5fa2"];
+  let rockets=[],parts=[],running=false,spawnT=null,AC=null,master=null;
+  function audio(){
+    if(AC) return AC;
+    try{ AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=.55; master.connect(AC.destination);}catch(e){AC=null}
+    return AC;
+  }
+  function noiseBuf(d){const n=AC.sampleRate*d,b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;return b}
+  function whistle(){ if(!AC) return; const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
+    o.type="sine";o.frequency.setValueAtTime(500,t);o.frequency.exponentialRampToValueAtTime(1500,t+.55);
+    g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.05,t+.1);g.gain.exponentialRampToValueAtTime(.0001,t+.6);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+.65) }
+  function boom(vol){ if(!AC) return; const t=AC.currentTime;
+    const n=AC.createBufferSource();n.buffer=noiseBuf(1.4);
+    const f=AC.createBiquadFilter();f.type="lowpass";f.frequency.setValueAtTime(2400,t);f.frequency.exponentialRampToValueAtTime(140,t+1.1);
+    const g=AC.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+1.3);
+    n.connect(f);f.connect(g);g.connect(master);n.start(t);
+    const o=AC.createOscillator(),og=AC.createGain();o.type="sine";o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(32,t+.5);
+    og.gain.setValueAtTime(vol*1.2,t);og.gain.exponentialRampToValueAtTime(.0001,t+.6);o.connect(og);og.connect(master);o.start(t);o.stop(t+.65);
+    for(let i=0;i<14;i++){ const ct=t+.18+Math.random()*.9,c=AC.createBufferSource();c.buffer=noiseBuf(.04);
+      const cf=AC.createBiquadFilter();cf.type="highpass";cf.frequency.value=2500+Math.random()*3000;
+      const cg=AC.createGain();cg.gain.setValueAtTime(vol*.35*Math.random(),ct);cg.gain.exponentialRampToValueAtTime(.0001,ct+.04);
+      c.connect(cf);cf.connect(cg);cg.connect(master);c.start(ct) } }
+  function launch(){
+    const x=W*(.12+Math.random()*.76), ty=H*(.14+Math.random()*.34);
+    rockets.push({x,y:H+10,vy:-(H-ty)/48,ty,col:COL[(Math.random()*COL.length)|0]});
+    whistle();
+  }
+  function explode(r){
+    const n=64+((Math.random()*30)|0), c2=COL[(Math.random()*COL.length)|0], two=Math.random()<.5;
+    for(let i=0;i<n;i++){const a=Math.PI*2*i/n+Math.random()*.1,sp=2+Math.random()*3.6;
+      parts.push({x:r.x,y:r.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,dec:.009+Math.random()*.008,col:two&&i%2?c2:r.col,s:2.2+Math.random()*1.6})}
+    boom(.35+Math.random()*.25);
+  }
+  function frame(){
+    cx.clearRect(0,0,W,H);
+    rockets=rockets.filter(r=>{r.y+=r.vy;cx.fillStyle=r.col;cx.beginPath();cx.arc(r.x,r.y,2.4,0,7);cx.fill();
+      if(r.y<=r.ty){explode(r);return false}return true});
+    parts=parts.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.vy=p.vy*.985+.045;p.life-=p.dec;
+      if(p.life<=0) return false;cx.globalAlpha=Math.max(0,p.life);cx.fillStyle=p.col;cx.beginPath();cx.arc(p.x,p.y,p.s*p.life+.4,0,7);cx.fill();cx.globalAlpha=1;return true});
+    if(running||rockets.length||parts.length) requestAnimationFrame(frame); else cx.clearRect(0,0,W,H);
+  }
+  return {
+    start(ms){
+      if(running) return; running=true; const a=audio(); if(a&&a.state==="suspended") a.resume();
+      const end=performance.now()+ms; launch(); setTimeout(launch,250); setTimeout(launch,520);
+      spawnT=setInterval(()=>{ if(performance.now()>end){clearInterval(spawnT);running=false;return} launch(); if(Math.random()<.5) setTimeout(launch,200) },700);
+      requestAnimationFrame(frame);
+    }
+  };
+})();
+
 /* ---------- Ouverture ---------- */
 let opened = false;
 function openInvite(){
   if(opened) return; opened = true;
   $("intro").classList.add("opening");
   const sc=$("scene");
+  FW.start(9500);   // feux d'artifice + bruitage dès le clic
   sc.classList.add("open");              // rabat s'ouvre, la carte sort
   if(bgm){ bgm.muted=true; bgm.play().then(()=>{bgm.pause();bgm.currentTime=0;bgm.muted=false}).catch(()=>{bgm.muted=false}); }  // déverrouille l'audio, sans son
   setTimeout(()=>sc.classList.add("out"),2500);      // l'enveloppe disparaît
