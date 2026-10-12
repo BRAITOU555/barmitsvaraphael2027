@@ -469,6 +469,47 @@ body.go #intro.opening .tap{animation:none}
 #pro .par{box-shadow:0 0 50px rgba(5,12,40,.6)}
 #pro .par .fr{height:5%}
 #pro .pelmet{height:96px;background:linear-gradient(180deg,#071236,#14337f 60%,#0d2461)}
+
+/* ===== Vrai rideau de scène en 2 parties ===== */
+#pro{--cd:#06143d;--cm:#173d94;--cl:#4f86e6;--g1:#f6dc94;--g2:#b98a35}
+#pro .par{width:52%;box-shadow:none;overflow:visible;z-index:6;transition:transform 2.8s cubic-bezier(.55,0,.25,1)}
+#pro .par.pl{left:0}#pro .par.pr{right:0}
+#pro .par .orn{width:192.3%;background:
+  repeating-linear-gradient(90deg,rgba(0,0,12,.62) 0,rgba(0,0,12,.18) 14px,rgba(255,255,255,.00) 26px,rgba(190,215,255,.34) 44px,rgba(255,255,255,.00) 62px,rgba(0,0,12,.20) 78px,rgba(0,0,12,.62) 96px),
+  repeating-linear-gradient(90deg,rgba(0,0,12,.22) 0,rgba(255,255,255,.07) 41px,rgba(0,0,12,.22) 83px),
+  linear-gradient(180deg,rgba(255,255,255,.12) 0,rgba(255,255,255,0) 22%,rgba(0,0,10,.15) 70%,rgba(0,0,10,.55) 100%),
+  linear-gradient(90deg,var(--cd),var(--cm) 35%,var(--cl) 50%,var(--cm) 65%,var(--cd))}
+#pro .par.pl .orn{left:0}#pro .par.pr .orn{right:0}
+#pro .par::after{width:14px;background:linear-gradient(90deg,rgba(0,0,10,.55),rgba(0,0,10,0));box-shadow:none}
+#pro .par.pl::after{right:-14px;transform:none}
+#pro .par.pr::after{left:-14px;transform:scaleX(-1)}
+#pro .par .fr{height:34px;background:linear-gradient(180deg,var(--g2),var(--g1) 45%,var(--g2));-webkit-mask:repeating-linear-gradient(90deg,#000 0 4px,transparent 4px 7px);mask:repeating-linear-gradient(90deg,#000 0 4px,transparent 4px 7px)}
+#pro .par .fr::before{content:"";position:absolute;left:0;right:0;top:-8px;height:8px;background:linear-gradient(180deg,#8a6420,var(--g1),#8a6420);-webkit-mask:none;mask:none}
+#pro.open .par.pl{transform:translateX(-2%) scaleX(.17)}
+#pro.open .par.pr{transform:translateX(2%) scaleX(.17)}
+/* embrasses dorées qui apparaissent quand le rideau est ouvert */
+#pro .tie{position:absolute;top:60%;width:10%;height:16px;z-index:7;opacity:0;pointer-events:none;background:linear-gradient(180deg,var(--g1),var(--g2));border-radius:8px;box-shadow:0 3px 6px rgba(0,0,0,.5);transition:opacity 1s ease 2s}
+#pro .tie::after{content:"";position:absolute;left:50%;top:14px;width:10px;height:40px;transform:translateX(-50%);background:repeating-linear-gradient(90deg,var(--g1) 0 2px,var(--g2) 2px 4px);border-radius:0 0 6px 6px;-webkit-mask:linear-gradient(180deg,#000 60%,transparent)}
+#pro .tie.tl{left:0}#pro .tie.tr{right:0}
+#pro.open .tie{opacity:1}
+/* lambrequin drapé */
+#pro .pelmet{display:block!important;height:118px;z-index:8;background:
+  repeating-linear-gradient(90deg,rgba(0,0,12,.55) 0,rgba(0,0,12,.1) 16px,rgba(190,215,255,.30) 34px,rgba(0,0,12,.12) 52px,rgba(0,0,12,.55) 70px),
+  linear-gradient(180deg,var(--cd),var(--cm) 70%,#0f2a78);
+  border-bottom:0;box-shadow:0 14px 30px rgba(0,0,10,.55);
+  -webkit-mask:radial-gradient(circle 46px at 46px 100%,transparent 97%,#000 100%) 0 100%/92px 100% repeat-x;mask:radial-gradient(circle 46px at 46px 100%,transparent 97%,#000 100%) 0 100%/92px 100% repeat-x;
+  transition:transform 1.2s ease .3s}
+#pro .pelmet::after{content:"";position:absolute;left:0;right:0;bottom:0;height:0}
+#pro .gate .gtxt{color:#f6dc94}
+
+#pro .pelmet{height:134px;
+  -webkit-mask:linear-gradient(#000,#000) 0 0/100% 84px no-repeat,radial-gradient(circle 46px at 46px 0,#000 97%,transparent 100%) 0 82px/92px 50px repeat-x;
+  mask:linear-gradient(#000,#000) 0 0/100% 84px no-repeat,radial-gradient(circle 46px at 46px 0,#000 97%,transparent 100%) 0 82px/92px 50px repeat-x}
+#pro .pelmet-trim{position:absolute;top:0;left:0;right:0;height:134px;z-index:7;pointer-events:none;transform:translateY(7px);
+  background:linear-gradient(180deg,var(--g1),var(--g2));
+  -webkit-mask:linear-gradient(#000,#000) 0 0/100% 84px no-repeat,radial-gradient(circle 46px at 46px 0,#000 97%,transparent 100%) 0 82px/92px 50px repeat-x;
+  mask:linear-gradient(#000,#000) 0 0/100% 84px no-repeat,radial-gradient(circle 46px at 46px 0,#000 97%,transparent 100%) 0 82px/92px 50px repeat-x;transition:transform 1.2s ease .3s}
+#pro.open.vid .pelmet-trim{transform:translateY(-110%)}
 </style>
 </head>
 <body class="locked">
@@ -543,7 +584,7 @@ const ART = {
   <div class="flash"></div>
   <div class="par pl"><div class="orn"><div class="fr"></div></div></div>
   <div class="par pr"><div class="orn"><div class="fr"></div></div></div>
-  <div class="pelmet"></div>
+  <div class="pelmet-trim"></div><div class="pelmet"></div><div class="tie tl"></div><div class="tie tr"></div>
   <div class="cur cl"></div><div class="cur cr"></div>
   <button class="gate" id="proGate" type="button" aria-label="Ouvrir">
     <span class="gbsd">בס״ד</span><span class="gseal">R</span><span class="gtxt">Touchez pour entrer</span>
