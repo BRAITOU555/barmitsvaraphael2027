@@ -447,6 +447,17 @@ body.go #intro.opening .tap{animation:none}
 #pro .gate .gtxt{color:#f6dc94;text-shadow:0 1px 8px rgba(0,0,0,.7)}
 #pro.open .par.pl{transform:translateX(-3%) scaleX(.12)}
 #pro.open .par.pr{transform:translateX(3%) scaleX(.12)}
+
+/* ===== Rideau bleu royal + tefilines ===== */
+#pro .par{background:linear-gradient(90deg,#0d1f55,#1d3f9a 50%,#102a70)}
+#pro .par .orn{background:
+  repeating-linear-gradient(90deg,rgba(0,0,20,.45) 0,rgba(0,0,20,.04) 9px,rgba(150,185,255,.20) 18px,rgba(0,0,20,.04) 27px,rgba(0,0,20,.45) 38px),
+  radial-gradient(ellipse at 50% 42%,rgba(120,170,255,.30),transparent 62%),linear-gradient(90deg,#0f2764,#214aaa 50%,#0f2764)}
+#pro .par .bd{box-shadow:inset 0 0 0 4px rgba(13,31,85,.95),inset 0 0 0 5px #e3bf62}
+#pro .pelmet{background:linear-gradient(180deg,#081439,#14337f 70%,#0d2461)}
+#pro .par .tef{position:absolute;left:50%;top:30%;width:62%;transform:translateX(-50%);filter:drop-shadow(0 0 1.5px #f0cf7a) drop-shadow(0 0 4px rgba(240,207,122,.6)) drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+#pro .par .mag{display:none}
+#pro .par .kt{top:68%}
 </style>
 </head>
 <body class="locked">
@@ -521,12 +532,48 @@ const ART = {
   <div class="flash"></div>
   <div class="par pl"><div class="orn"><div class="bd"></div><span class="col c1"></span><span class="col c2"></span>
       <svg class="crn" viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#e8c35c" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
-      <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
-      <div class="kt">כתר תורה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
+      <svg class="tef" viewBox="0 0 200 190">
+  <defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".5" stop-color="#d9a93f"/><stop offset="1" stop-color="#8a6420"/></linearGradient>
+  <linearGradient id="bk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3a42"/><stop offset=".5" stop-color="#0c0c10"/><stop offset="1" stop-color="#25252c"/></linearGradient></defs>
+  <!-- shel rosh -->
+  <path d="M40 60 C20 100 24 160 52 178" fill="none" stroke="#0c0c10" stroke-width="7" stroke-linecap="round"/>
+  <path d="M160 60 C180 100 176 160 148 178" fill="none" stroke="#0c0c10" stroke-width="7" stroke-linecap="round"/>
+  <rect x="62" y="14" width="76" height="62" rx="6" fill="url(#bk)" stroke="url(#gd)" stroke-width="3"/>
+  <rect x="70" y="22" width="60" height="14" rx="3" fill="none" stroke="#d9a93f" stroke-width="1.6" opacity=".9"/>
+  <path d="M100 38 L100 72 M82 55 L118 55" stroke="#d9a93f" stroke-width="2.4" opacity=".95"/>
+  <text x="100" y="33" text-anchor="middle" font-size="12" fill="#f0cf7a" font-family="serif">ש</text>
+  <rect x="68" y="76" width="64" height="9" rx="2" fill="#0c0c10" stroke="url(#gd)" stroke-width="2"/>
+  <rect x="92" y="85" width="16" height="12" rx="2" fill="#0c0c10" stroke="url(#gd)" stroke-width="2"/>
+  <!-- shel yad enroulé -->
+  <rect x="82" y="116" width="36" height="30" rx="4" fill="url(#bk)" stroke="url(#gd)" stroke-width="2.4"/>
+  <path d="M100 124 L100 140 M92 132 L108 132" stroke="#d9a93f" stroke-width="2"/>
+  <g stroke="#0c0c10" stroke-width="5" stroke-linecap="round" fill="none"><path d="M70 152 Q100 160 130 152"/><path d="M72 162 Q100 170 128 162"/><path d="M76 172 Q100 179 124 172"/></g>
+  <g stroke="#6a6a74" stroke-width="1" fill="none" opacity=".7"><path d="M70 150 Q100 158 130 150"/><path d="M72 160 Q100 168 128 160"/><path d="M76 170 Q100 177 124 170"/></g>
+</svg>
+          <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
+      <div class="kt">בר מצוה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
   <div class="par pr"><div class="orn"><div class="bd"></div><span class="col c1"></span><span class="col c2"></span>
       <svg class="crn" viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#e8c35c" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
-      <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
-      <div class="kt">כתר תורה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
+      <svg class="tef" viewBox="0 0 200 190">
+  <defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".5" stop-color="#d9a93f"/><stop offset="1" stop-color="#8a6420"/></linearGradient>
+  <linearGradient id="bk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3a42"/><stop offset=".5" stop-color="#0c0c10"/><stop offset="1" stop-color="#25252c"/></linearGradient></defs>
+  <!-- shel rosh -->
+  <path d="M40 60 C20 100 24 160 52 178" fill="none" stroke="#0c0c10" stroke-width="7" stroke-linecap="round"/>
+  <path d="M160 60 C180 100 176 160 148 178" fill="none" stroke="#0c0c10" stroke-width="7" stroke-linecap="round"/>
+  <rect x="62" y="14" width="76" height="62" rx="6" fill="url(#bk)" stroke="url(#gd)" stroke-width="3"/>
+  <rect x="70" y="22" width="60" height="14" rx="3" fill="none" stroke="#d9a93f" stroke-width="1.6" opacity=".9"/>
+  <path d="M100 38 L100 72 M82 55 L118 55" stroke="#d9a93f" stroke-width="2.4" opacity=".95"/>
+  <text x="100" y="33" text-anchor="middle" font-size="12" fill="#f0cf7a" font-family="serif">ש</text>
+  <rect x="68" y="76" width="64" height="9" rx="2" fill="#0c0c10" stroke="url(#gd)" stroke-width="2"/>
+  <rect x="92" y="85" width="16" height="12" rx="2" fill="#0c0c10" stroke="url(#gd)" stroke-width="2"/>
+  <!-- shel yad enroulé -->
+  <rect x="82" y="116" width="36" height="30" rx="4" fill="url(#bk)" stroke="url(#gd)" stroke-width="2.4"/>
+  <path d="M100 124 L100 140 M92 132 L108 132" stroke="#d9a93f" stroke-width="2"/>
+  <g stroke="#0c0c10" stroke-width="5" stroke-linecap="round" fill="none"><path d="M70 152 Q100 160 130 152"/><path d="M72 162 Q100 170 128 162"/><path d="M76 172 Q100 179 124 172"/></g>
+  <g stroke="#6a6a74" stroke-width="1" fill="none" opacity=".7"><path d="M70 150 Q100 158 130 150"/><path d="M72 160 Q100 168 128 160"/><path d="M76 170 Q100 177 124 170"/></g>
+</svg>
+          <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
+      <div class="kt">בר מצוה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
   <div class="pelmet"></div>
   <div class="cur cl"></div><div class="cur cr"></div>
   <button class="gate" id="proGate" type="button" aria-label="Ouvrir">
@@ -745,15 +792,24 @@ $("rsvpForm").addEventListener("submit", async ev=>{
 $("editBtn").onclick = ()=>{ $("thanks").classList.remove("show"); $("rsvpForm").style.display = ""; };
 
 /* ---------- Musique ---------- */
-const MUS=(()=>{ let ac=null,gain=null,buf=null,src=null,playing=false,wanted=false;
-  function init(){ if(ac||!CONFIG.musique) return;
-    try{ ac=new (window.AudioContext||window.webkitAudioContext)(); gain=ac.createGain(); gain.gain.value=0; gain.connect(ac.destination);
-      fetch(CONFIG.musique).then(r=>r.arrayBuffer()).then(d=>ac.decodeAudioData(d,x=>{buf=x; if(wanted) play()},()=>{})).catch(()=>{}); }catch(e){ac=null} }
-  function unlock(){ init(); if(ac&&ac.state==="suspended") ac.resume() }
-  function play(){ if(!ac||!buf||playing) return; playing=true; src=ac.createBufferSource(); src.buffer=buf; src.loop=true; src.connect(gain); src.start();
+const MUS=(()=>{ let ac=null,gain=null,buf=null,src=null,playing=false,wanted=false,el=null,useEl=false,unlocked=false,fetching=false;
+  function ctxInit(){ if(ac||!CONFIG.musique) return;
+    try{ ac=new (window.AudioContext||window.webkitAudioContext)(); gain=ac.createGain(); gain.gain.value=0; gain.connect(ac.destination);}catch(e){ac=null} }
+  function loadBuf(){ if(fetching||!ac) return; fetching=true;
+    fetch(CONFIG.musique).then(r=>r.arrayBuffer()).then(d=>ac.decodeAudioData(d,x=>{buf=x; if(wanted&&!useEl) playBuf()},()=>{})).catch(()=>{}) }
+  function playBuf(){ if(!ac||!buf||playing) return; playing=true; src=ac.createBufferSource(); src.buffer=buf; src.loop=true; src.connect(gain); src.start();
     gain.gain.cancelScheduledValues(ac.currentTime); gain.gain.setValueAtTime(0,ac.currentTime); gain.gain.linearRampToValueAtTime(.6,ac.currentTime+2.5); $("snd").classList.remove("muted") }
-  return { unlock, start(){ wanted=true; unlock(); play() },
-    toggle(){ if(!ac) return; if(!playing){ wanted=true; play(); return }
+  function unlock(){ ctxInit(); if(ac&&ac.state==="suspended") ac.resume();
+    if(!unlocked&&CONFIG.musique){ unlocked=true; el=new Audio(CONFIG.musique); el.loop=true; el.preload="auto"; el.muted=true;
+      const p=el.play(); if(p&&p.then) p.then(()=>{ el.pause(); el.currentTime=0; el.muted=false }).catch(()=>{ el.muted=false }) } }
+  function fallback(){ useEl=false; ctxInit(); if(ac&&ac.state==="suspended") ac.resume(); loadBuf(); playBuf() }
+  return { unlock, start(){ wanted=true; unlock();
+      if(!el){ fallback(); return }
+      el.muted=false; el.volume=0; const p=el.play();
+      const ok=()=>{ useEl=true; playing=true; $("snd").classList.remove("muted"); let v=0; const iv=setInterval(()=>{ v=Math.min(.6,v+.04); try{el.volume=v}catch(e){} if(v>=.6) clearInterval(iv) },100) };
+      if(p&&p.then) p.then(ok).catch(fallback); else ok() },
+    toggle(){ if(useEl&&el){ if(el.paused){ el.play(); $("snd").classList.remove("muted") } else { el.pause(); $("snd").classList.add("muted") } return }
+      if(!ac) return; if(!playing){ wanted=true; fallback(); return }
       if(ac.state==="running"){ ac.suspend(); $("snd").classList.add("muted") } else { ac.resume(); $("snd").classList.remove("muted") } } } })();
 if(CONFIG.musique){ $("snd").classList.add("ok"); $("snd").onclick=()=>MUS.toggle(); }
 function startMusic(){ MUS.start() }
