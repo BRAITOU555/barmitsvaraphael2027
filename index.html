@@ -64,7 +64,36 @@ body.locked{overflow:hidden}
   backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .face.back{transform:rotateY(180deg);gap:6px;padding:0 14px}
 .k-wel{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--muted);z-index:1}
-.k-guest{font-weight:500;font-family:'Cormorant Garamond',serif;font-size:clamp(1.55rem,6.2vw,2.05rem);line-height:1.2;letter-spacing:.04em;color:var(--ink);z-index:1}
+.k-guest{font-weight:500;font-family:'Cormorant Garamond',serif;font-size:clamp(1.3rem,5.3vw,1.8rem);line-height:1.25;letter-spacing:.03em;padding:0 22px;color:var(--ink);z-index:1}
+
+/* Carte joyeuse */
+.face{background:radial-gradient(ellipse at 50% 38%,#fffefb 0,#fff8e6 62%,#fdeecb 100%)}
+.face::before{border:2px solid transparent!important;border-radius:3px!important;background:linear-gradient(135deg,#f6dc94,#b98a35 45%,#f3d98c 70%,#a87a2a) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0)}
+.face::after{border:1px solid #f4dfa6!important}
+.face .corner{border-color:#c79a3b!important;width:24px!important;height:24px!important;border-width:2px!important}
+.confetti{position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:3px;overflow:hidden;
+ background:
+  radial-gradient(circle at 12% 22%,#e85d75 0 3px,transparent 3.5px),
+  radial-gradient(circle at 88% 18%,#2f80d1 0 3px,transparent 3.5px),
+  radial-gradient(circle at 20% 82%,#2fb7a3 0 3px,transparent 3.5px),
+  radial-gradient(circle at 82% 80%,#f2a93b 0 3.5px,transparent 4px),
+  radial-gradient(circle at 7% 52%,#f2a93b 0 2.5px,transparent 3px),
+  radial-gradient(circle at 94% 50%,#e85d75 0 2.5px,transparent 3px),
+  radial-gradient(circle at 34% 10%,#2fb7a3 0 2px,transparent 2.5px),
+  radial-gradient(circle at 68% 90%,#2f80d1 0 2px,transparent 2.5px),
+  radial-gradient(circle at 70% 11%,#f2a93b 0 2px,transparent 2.5px),
+  radial-gradient(circle at 30% 91%,#e85d75 0 2px,transparent 2.5px)}
+.spark{position:absolute;z-index:1;color:#d9a93f;font-size:.9rem;line-height:1;animation:tw 2.2s ease-in-out infinite}
+.spark.s1{top:20%;left:15%}.spark.s2{top:26%;right:13%;animation-delay:.7s;font-size:.7rem}
+.spark.s3{bottom:22%;left:12%;animation-delay:1.1s;font-size:.7rem}.spark.s4{bottom:18%;right:15%;animation-delay:.3s}
+@keyframes tw{0%,100%{opacity:.25;transform:scale(.7) rotate(0)}50%{opacity:1;transform:scale(1.25) rotate(20deg)}}
+.face .k-name{background:linear-gradient(100deg,#7a5210 0%,#b8821f 30%,#e3b84c 50%,#a8741a 70%,#6e480d 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding:0 .12em;filter:drop-shadow(0 1px 0 rgba(255,255,255,.7))}
+.face .k-bsd{color:#b98a35}
+.face .k-cap{color:#a87a2a;font-weight:500;letter-spacing:.5em}
+.face .k-sub{color:#7d6a45;font-style:italic}
+.k-mazal{font-family:'Frank Ruhl Libre',serif;font-size:.95rem;color:#c0392b;letter-spacing:.08em;z-index:1;margin-top:5px}
+.k-mazal small{font-family:'Jost',sans-serif;font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:#a87a2a;margin-left:6px}
+.face .k-guest{color:#2a2218}
 .k-evt{font-family:'Jost',sans-serif;font-size:.52rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold-deep);z-index:1}
 .face::before{content:"";position:absolute;inset:7px;border:1px solid var(--gold-soft);border-radius:2px}
 .face::after{content:"";position:absolute;inset:11px;border:1px solid #f1e6cc;border-radius:1px}
@@ -294,14 +323,17 @@ const ART = {
       <div class="env-back"></div>
       <div class="card"><div class="flip">
         <div class="face front">
+          <i class="confetti"></i><i class="spark s1">✦</i><i class="spark s2">✦</i><i class="spark s3">✦</i><i class="spark s4">✦</i>
           <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
           <span class="k-bsd">בס״ד</span>
           <span class="k-cap">Bar Mitsva</span>
           <b class="k-name" id="cardName"></b>
           <span class="k-dia"><i></i></span>
           <span class="k-sub">Vous êtes invités</span>
+          <span class="k-mazal">מזל טוב<small>Mazal Tov</small></span>
         </div>
         <div class="face back">
+          <i class="confetti"></i><i class="spark s1">✦</i><i class="spark s2">✦</i><i class="spark s3">✦</i><i class="spark s4">✦</i>
           <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
           <span class="k-wel">Chers</span>
           <b class="k-guest" id="cardGuest"></b>
