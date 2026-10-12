@@ -287,6 +287,29 @@ body.shown .snd.ok{display:grid}
 .step{border-color:var(--c-teal)}.step button{background:#e4f6f2;color:var(--c-teal)}
 .mazal{background:linear-gradient(180deg,#fff,#fff0f3 55%,#eef4ff)}
 #fw{position:fixed;inset:0;width:100%;height:100%;z-index:70;pointer-events:none}
+
+/* ===== Animation d'arrivée (dès l'ouverture du lien) ===== */
+@keyframes fUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 -10% 0 0)}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes envIn{0%{opacity:0;transform:translateY(160px) rotate(-8deg) scale(.7)}60%{opacity:1;transform:translateY(-14px) rotate(2deg) scale(1.03)}100%{opacity:1;transform:none}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(.6deg)}}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(0)}70%{transform:translate(-50%,-50%) scale(1.25)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes ring{0%{box-shadow:0 4px 10px rgba(70,50,10,.38),0 0 0 0 rgba(217,169,63,.7)}100%{box-shadow:0 4px 10px rgba(70,50,10,.38),0 0 0 26px rgba(217,169,63,0)}}
+@keyframes pulseT{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes rise{0%{opacity:0;transform:translateY(0) scale(.5) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translateY(-70vh) scale(1.2) rotate(120deg)}}
+#intro .bsd{animation:fUp .9s .2s backwards}
+#intro .inv{animation:wipe 1.5s .6s cubic-bezier(.5,0,.2,1) backwards}
+#intro .rule{animation:grow 1s 1.7s backwards}
+#intro .guest{animation:fUp 1s 1.9s backwards}
+.scene{animation:envIn 1.4s 1s cubic-bezier(.3,1.2,.4,1) backwards,bob 3.6s 2.6s ease-in-out infinite}
+.scene.open{animation:none}
+.seal{animation:pop .7s 2.3s backwards,ring 1.8s 3s ease-out infinite}
+.scene.open .seal{animation:none}
+#intro .tap{animation:fUp .9s 3s backwards,pulseT 1.8s 4s ease-in-out infinite}
+#intro.opening .tap{animation:none}
+.dust{position:absolute;bottom:-20px;color:#d9a93f;pointer-events:none;animation:rise linear infinite;z-index:0}
+#intro>*:not(.dust){position:relative;z-index:1}
 </style>
 </head>
 <body class="locked">
@@ -669,6 +692,13 @@ const FW=(()=>{
     }
   };
 })();
+
+
+/* particules dorées qui montent sur l'écran d'accueil */
+(()=>{ const it=$("intro"); const cols=["#d9a93f","#e0475f","#2457b8","#18a58f","#f08a24"];
+  for(let i=0;i<22;i++){ const d=document.createElement("span"); d.className="dust"; d.textContent=i%3?"✦":"•";
+    d.style.left=(Math.random()*100)+"%"; d.style.fontSize=(10+Math.random()*14)+"px"; d.style.color=cols[i%cols.length];
+    d.style.animationDuration=(5+Math.random()*5)+"s"; d.style.animationDelay=(Math.random()*6)+"s"; it.appendChild(d) } })();
 
 /* ---------- Ouverture ---------- */
 let opened = false;
