@@ -575,7 +575,9 @@ if(CONFIG.musique){
     else { bgm.pause(); $("snd").classList.add("muted"); }
   };
 }
-function startMusic(){ if(bgm){ bgm.play().then(()=>$("snd").classList.remove("muted")).catch(()=>$("snd").classList.add("muted")); } }
+function startMusic(){ if(!bgm) return;
+  const go=()=>{ $("snd").classList.remove("muted"); let v=0; const iv=setInterval(()=>{ v=Math.min(.6,v+.04); bgm.volume=v; if(v>=.6) clearInterval(iv) },100) };
+  if(bgm.paused){ bgm.volume=0; bgm.play().then(go).catch(()=>$("snd").classList.add("muted")) } else go(); }
 $("snd").classList.add("muted");
 
 
@@ -676,14 +678,13 @@ function openInvite(){
   const sc=$("scene");
   FW.unlock();
   sc.classList.add("open");              // rabat s'ouvre, la carte sort
-  if(bgm){ bgm.muted=true; bgm.play().then(()=>{bgm.pause();bgm.currentTime=0;bgm.muted=false}).catch(()=>{bgm.muted=false}); }  // déverrouille l'audio, sans son
+  if(bgm){ bgm.volume=0; bgm.play().catch(()=>{}); }   // démarre en silence (autorisé par le clic), le son monte après les feux
   setTimeout(()=>sc.classList.add("out"),2500);      // l'enveloppe disparaît
   setTimeout(()=>sc.classList.add("flipped"),3700);  // la carte se retourne
   setTimeout(()=>{ $("intro").classList.add("night"); FW.show(3300); },5100);   // nuit + feu d'artifice juste avant l'ouverture
-  setTimeout(()=>sc.classList.add("enter"),8700);    // la carte s'ouvre sur l'invitation
+  setTimeout(()=>{ startMusic(); sc.classList.add("enter"); },8500);   // la chanson démarre à la fin des feux d'artifice    // la carte s'ouvre sur l'invitation
   setTimeout(()=>{
     $("intro").classList.add("gone");
-    startMusic();
     document.body.classList.remove("locked");
     document.body.classList.add("shown");
     $("main").classList.add("show");
