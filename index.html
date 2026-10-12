@@ -103,6 +103,10 @@ main.show{opacity:1}
 
 .intro-txt{padding:80px 24px 30px;text-align:center;max-width:640px;margin:0 auto}
 .intro-txt .bsd{display:block;margin-bottom:18px}
+.verse{margin:0 auto 46px;max-width:520px}
+.verse .heb{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1.6rem,6vw,2.1rem);color:var(--gold);line-height:1.6;direction:rtl}
+.verse .fr{font-style:italic;color:var(--muted);font-size:1.1rem;line-height:1.7;margin-top:10px}
+.verse .ref{margin-top:8px;font-size:.6rem}
 .intro-txt .parents{font-size:clamp(2rem,6.5vw,2.6rem);color:var(--ink);line-height:1.4}
 .intro-txt .lead{margin:22px 0 4px;font-size:1.15rem;line-height:1.9;color:var(--muted);letter-spacing:.02em}
 .intro-txt .kid{font-size:clamp(3.4rem,13vw,5.2rem);color:var(--gold);line-height:1.2;margin-top:6px}
@@ -187,6 +191,7 @@ const CONFIG = {
   dates: "3 mai & 30 mai 2027",
   // Adresse qui reçoit les réponses (voir README). Vide = mode test (rien n'est enregistré).
   rsvpEndpoint: "",
+  verset: {heb:"שמע בני מוסר אביך ואל תטש תורת אמך", fr:"Écoute, mon fils, l’instruction de ton père, et ne délaisse pas l’enseignement de ta mère.", ref:"Proverbes 1, 8"},
   pensee: {avant:"En ce jour si spécial, nos pensées vont vers", noms:["Denis et Danielle Mouly"], apres:"Leur amour et leurs souvenirs illuminent notre célébration."},
   evenements: [
     {id:"tefilines", art:"tefilines", image:"mise-des-tefilines.jpg", titre:"La Mise des Tefilines",
@@ -281,6 +286,7 @@ const ART = {
 
   <section class="intro-txt rv" id="famille">
     <span class="bsd">בס״ד</span>
+    <div class="verse" id="verse"></div>
     <div class="parents script" id="parents"></div>
     <p class="lead">ont l'immense joie de vous faire part de la<br>Bar Mitsva de leur fils</p>
     <div class="kid script" id="kid"></div>
@@ -333,6 +339,7 @@ $("heroName").textContent = CONFIG.garcon;
 $("heroHeb").textContent = CONFIG.garconHebreu;
 $("heroDates").textContent = CONFIG.dates;
 $("parents").textContent = CONFIG.parents;
+if(CONFIG.verset){ const V=CONFIG.verset; $("verse").innerHTML = `<div class="heb">${V.heb}</div><p class="fr">${V.fr}</p><p class="caps ref">${V.ref}</p>`; }
 $("kid").textContent = CONFIG.garcon;
 $("footName").textContent = CONFIG.garcon + (CONFIG.famille ? " " + CONFIG.famille : "");
 
