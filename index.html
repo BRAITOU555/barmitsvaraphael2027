@@ -510,6 +510,34 @@ body.go #intro.opening .tap{animation:none}
   -webkit-mask:linear-gradient(#000,#000) 0 0/100% 84px no-repeat,radial-gradient(circle 46px at 46px 0,#000 97%,transparent 100%) 0 82px/92px 50px repeat-x;
   mask:linear-gradient(#000,#000) 0 0/100% 84px no-repeat,radial-gradient(circle 46px at 46px 0,#000 97%,transparent 100%) 0 82px/92px 50px repeat-x;transition:transform 1.2s ease .3s}
 #pro.open.vid .pelmet-trim{transform:translateY(-110%)}
+
+/* ===== Rideau n°3 : velours rouge, ouverture en arc (grand rideau drapé) ===== */
+#pro{--cd:#38040f;--cm:#8c1226;--cl:#e24a5e;--g1:#f6dc94;--g2:#b98a35}
+#pro .par{overflow:hidden;width:52%;transform:none!important;transition:clip-path 3s cubic-bezier(.55,0,.25,1)}
+#pro .par.pl{clip-path:polygon(0 0,100% 0%,100% 12%,100% 25%,100% 40%,100% 55%,100% 70%,100% 85%,100% 100%,0 100%)}
+#pro .par.pr{clip-path:polygon(100% 0,0% 0%,0% 12%,0% 25%,0% 40%,0% 55%,0% 70%,0% 85%,0% 100%,100% 100%)}
+#pro.open .par.pl{clip-path:polygon(0 0,42% 0%,31% 12%,23% 25%,18% 40%,15% 55%,21% 70%,31% 85%,44% 100%,0 100%)}
+#pro.open .par.pr{clip-path:polygon(100% 0,58% 0%,69% 12%,77% 25%,82% 40%,85% 55%,79% 70%,69% 85%,56% 100%,100% 100%)}
+#pro .par .orn{background:
+  repeating-linear-gradient(90deg,rgba(20,0,4,.66) 0,rgba(20,0,4,.2) 18px,rgba(255,255,255,0) 34px,rgba(255,190,190,.36) 56px,rgba(255,255,255,0) 78px,rgba(20,0,4,.22) 98px,rgba(20,0,4,.66) 120px),
+  repeating-linear-gradient(90deg,rgba(20,0,4,.2) 0,rgba(255,255,255,.07) 53px,rgba(20,0,4,.2) 107px),
+  linear-gradient(180deg,rgba(255,255,255,.16) 0,rgba(255,255,255,0) 24%,rgba(20,0,4,.12) 70%,rgba(20,0,4,.6) 100%),
+  linear-gradient(90deg,var(--cd),var(--cm) 35%,var(--cl) 50%,var(--cm) 65%,var(--cd))}
+#pro .par::after{display:none}
+#pro .tie{top:54%;width:9%;height:18px}
+/* lambrequin : 3 grands festons + glands */
+#pro .pelmet,#pro .pelmet-trim{height:168px;
+  -webkit-mask:linear-gradient(#000,#000) 0 0/100% 78px no-repeat,radial-gradient(ellipse 50% 100% at 50% 0,#000 98%,transparent 100%) 0 76px/33.4% 92px repeat-x;
+  mask:linear-gradient(#000,#000) 0 0/100% 78px no-repeat,radial-gradient(ellipse 50% 100% at 50% 0,#000 98%,transparent 100%) 0 76px/33.4% 92px repeat-x}
+#pro .pelmet{background:
+  repeating-linear-gradient(90deg,rgba(20,0,4,.55) 0,rgba(20,0,4,.1) 20px,rgba(255,190,190,.32) 44px,rgba(20,0,4,.12) 68px,rgba(20,0,4,.55) 90px),
+  linear-gradient(180deg,var(--cd),var(--cm) 70%,#a31830)}
+#pro .pelmet-trim{transform:translateY(8px)}
+#pro .tas{position:absolute;top:150px;width:14px;height:56px;z-index:9;transform:translateX(-50%);pointer-events:none;transition:transform 1.2s ease .3s;
+  background:linear-gradient(180deg,var(--g1) 0 14px,transparent 14px),repeating-linear-gradient(90deg,var(--g1) 0 2px,var(--g2) 2px 4px);-webkit-mask:linear-gradient(180deg,#000 85%,transparent);mask:linear-gradient(180deg,#000 85%,transparent);border-radius:7px 7px 3px 3px}
+#pro .tas.t1{left:0;transform:none}#pro .tas.t2{left:33.4%}#pro .tas.t3{left:66.7%}#pro .tas.t4{left:100%;transform:translateX(-100%)}
+#pro.open.vid .tas{transform:translateY(-300px)}
+#pro .gate .gtxt{color:#f6dc94}
 </style>
 </head>
 <body class="locked">
@@ -584,7 +612,7 @@ const ART = {
   <div class="flash"></div>
   <div class="par pl"><div class="orn"><div class="fr"></div></div></div>
   <div class="par pr"><div class="orn"><div class="fr"></div></div></div>
-  <div class="pelmet-trim"></div><div class="pelmet"></div><div class="tie tl"></div><div class="tie tr"></div>
+  <div class="pelmet-trim"></div><i class="tas t1"></i><i class="tas t2"></i><i class="tas t3"></i><i class="tas t4"></i><div class="pelmet"></div><div class="tie tl"></div><div class="tie tr"></div>
   <div class="cur cl"></div><div class="cur cr"></div>
   <button class="gate" id="proGate" type="button" aria-label="Ouvrir">
     <span class="gbsd">בס״ד</span><span class="gseal">R</span><span class="gtxt">Touchez pour entrer</span>
@@ -926,14 +954,14 @@ const FW=(()=>{
 /* ---------- Prologue : film puis arrivée ---------- */
 (()=>{ const pro=$("pro"),vid=$("proVid"); let done=false;
   function finish(){ if(done) return; done=true;
-    pro.style.transition="opacity 2s ease, visibility 2s"; document.body.classList.add("go"); pro.classList.add("gone");   // fondu de 2 s : l'enveloppe apparaît dessous
-    const v0=vid.volume,t0=performance.now(); const fv=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/2000); try{vid.volume=v0*(1-k)}catch(e){} if(k>=1){clearInterval(fv);try{vid.pause()}catch(e){}} },50);
-    setTimeout(()=>pro.remove(),2400) }
+    pro.style.transition="opacity 1s ease, visibility 1s"; document.body.classList.add("go"); pro.classList.add("gone");   // fondu de 2 s : l'enveloppe apparaît dessous
+    const v0=vid.volume,t0=performance.now(); const fv=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/1000); try{vid.volume=v0*(1-k)}catch(e){} if(k>=1){clearInterval(fv);try{vid.pause()}catch(e){}} },50);
+    setTimeout(()=>pro.remove(),1400) }
   if(new URLSearchParams(location.search).has("skip") || !vid.canPlayType || (!vid.canPlayType("video/mp4")&&!vid.canPlayType("video/webm"))){ pro.remove(); document.body.classList.add("go"); return }
   vid.addEventListener("error",e=>{ if(e.target!==vid) return; if(!done){ pro.classList.contains("open")?finish():(pro.remove(),document.body.classList.add("go"),done=true) } });
   const srcs=vid.querySelectorAll("source"); srcs[srcs.length-1].addEventListener("error",()=>{ if(!done){ pro.classList.contains("open")?finish():(pro.remove(),document.body.classList.add("go"),done=true) } });
   vid.addEventListener("ended",finish);
-  vid.addEventListener("timeupdate",()=>{ if(vid.duration&&vid.duration-vid.currentTime<2) finish() });
+  vid.addEventListener("timeupdate",()=>{ if(vid.duration&&vid.duration-vid.currentTime<1) finish() });
   $("proSkip").onclick=finish;
   $("proGate").onclick=()=>{ MUS.unlock(); FW.unlock();
     pro.classList.add("open");
