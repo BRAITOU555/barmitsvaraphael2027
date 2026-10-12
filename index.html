@@ -1025,12 +1025,16 @@ const FW=(()=>{
   vid.addEventListener("ended",finish);
   vid.addEventListener("timeupdate",()=>{ if(vid.duration&&vid.duration-vid.currentTime<1) finish() });
   $("proSkip").onclick=finish;
+  let started=false;
+  function startVideo(){ if(started||done) return; started=true; pro.classList.add("vid","play");
+    vid.muted=false; vid.volume=1; try{vid.currentTime=0}catch(e){}
+    vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) }
   $("proGate").onclick=()=>{ MUS.unlock(); FW.unlock();
     pro.classList.add("open");
-    vid.muted=false; vid.volume=1;
-    const p=vid.play(); if(p&&p.then) p.then(()=>{ vid.pause(); vid.currentTime=0 }).catch(()=>{});   // autorisation du son par le geste
-    setTimeout(()=>{ pro.classList.add("vid","play");
-      vid.muted=false; vid.volume=1; vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) },3600); };
+    // autorisation du geste, en SILENCE : la vidéo ne joue ni son ni image avant l'ouverture complète du rideau
+    vid.muted=true; const p=vid.play(); if(p&&p.then) p.then(()=>{ if(!started){ vid.pause(); try{vid.currentTime=0}catch(e){} } }).catch(()=>{});
+    const pl=pro.querySelector(".par.pl"); pl.addEventListener("transitionend",e=>{ if(e.target===pl&&e.propertyName==="transform") setTimeout(startVideo,250) });
+    setTimeout(startVideo,4300); };   // filet de sécurité
 })();
 
 /* ---------- Ouverture ---------- */
