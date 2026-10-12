@@ -430,6 +430,23 @@ body.go #intro.opening .tap{animation:none}
 #pro.open .par.pr{transform:translateX(3%) scaleX(.13)}
 #pro .door{transition:transform 2.5s cubic-bezier(.5,0,.2,1) 1.6s}
 #pro.open .ark-in{animation:glow 2.6s ease-out 1.6s both}
+
+/* ===== Rideau plein écran (sans Heikhal) ===== */
+#pro .cur{display:none!important}
+#pro .pelmet{display:block!important;position:absolute;top:0;left:0;right:0;height:84px;z-index:8;pointer-events:none;
+  background:linear-gradient(180deg,#3d0812,#701528 70%,#5a0f1f);border-bottom:5px solid #d9b45a;box-shadow:0 10px 30px rgba(30,5,10,.5);
+  -webkit-mask:radial-gradient(circle 26px at 26px 100%,transparent 98%,#000 100%) 0 100%/52px 100% repeat-x;transition:transform 1s ease .2s}
+#pro.open.vid .pelmet{transform:translateY(-110%)}
+#pro .par{z-index:6;transition:transform 2.6s cubic-bezier(.6,0,.2,1)}
+#pro .par .bd{inset:11% 6% 10% 6%}
+#pro .par .crn{top:14%;width:34%}
+#pro .par .mag{top:34%;width:50%}
+#pro .par .kt{top:65%;font-size:clamp(1.3rem,6.4vw,2rem)}
+#pro .par .dm{top:74%}
+#pro .gate{z-index:9;padding-bottom:13vh}
+#pro .gate .gtxt{color:#f6dc94;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+#pro.open .par.pl{transform:translateX(-3%) scaleX(.12)}
+#pro.open .par.pr{transform:translateX(3%) scaleX(.12)}
 </style>
 </head>
 <body class="locked">
@@ -502,32 +519,18 @@ const ART = {
     <button class="skip" id="proSkip" type="button">Passer</button>
   </div>
   <div class="flash"></div>
-  <div class="ark" id="ark"><div class="ark-frame">
-    <div class="ark-top">
-      <svg viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#d9a93f" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
-      <span class="ins">דע לפני מי אתה עומד</span>
-    </div>
-    <div class="lamp"><i></i><b></b></div>
-    <div class="ark-in">
-      <div class="sc a"><span class="rod"></span><span class="crown"></span><div class="mantle"></div></div>
-      <div class="sc b"><span class="rod"></span><span class="crown"></span><div class="mantle"></div></div>
-      <div class="sc c"><span class="rod"></span><span class="crown"></span><div class="mantle"></div></div>
-      <div class="shelf"></div>
-      <div class="par pl"><div class="orn"><div class="bd"></div><span class="col c1"></span><span class="col c2"></span>
-          <svg class="crn" viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#e8c35c" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
-          <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
-          <div class="kt">כתר תורה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
-      <div class="par pr"><div class="orn"><div class="bd"></div><span class="col c1"></span><span class="col c2"></span>
-          <svg class="crn" viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#e8c35c" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
-          <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
-          <div class="kt">כתר תורה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
-      <div class="door l"><div class="leaf"><div class="panel"></div><div class="panel p2"></div><svg viewBox="0 0 100 100" class="star"><polygon points="50,6 88,72 12,72" fill="none" stroke="#6b4a14" stroke-width="3.5"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#6b4a14" stroke-width="3.5"/></svg><span class="knob"></span></div></div>
-      <div class="door r"><div class="leaf"><div class="panel"></div><div class="panel p2"></div><svg viewBox="0 0 100 100" class="star"><polygon points="50,6 88,72 12,72" fill="none" stroke="#6b4a14" stroke-width="3.5"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#6b4a14" stroke-width="3.5"/></svg><span class="knob"></span></div></div>
-    </div>
-  </div></div>
+  <div class="par pl"><div class="orn"><div class="bd"></div><span class="col c1"></span><span class="col c2"></span>
+      <svg class="crn" viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#e8c35c" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
+      <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
+      <div class="kt">כתר תורה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
+  <div class="par pr"><div class="orn"><div class="bd"></div><span class="col c1"></span><span class="col c2"></span>
+      <svg class="crn" viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#e8c35c" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
+      <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
+      <div class="kt">כתר תורה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
+  <div class="pelmet"></div>
   <div class="cur cl"></div><div class="cur cr"></div>
   <button class="gate" id="proGate" type="button" aria-label="Ouvrir">
-    <span class="gbsd">בס״ד</span><span class="gseal">R</span><span class="gtxt">Touchez pour ouvrir le Heikhal</span>
+    <span class="gbsd">בס״ד</span><span class="gseal">R</span><span class="gtxt">Touchez pour entrer</span>
   </button>
 </div>
 <canvas id="fw"></canvas>
@@ -870,7 +873,7 @@ const FW=(()=>{
     vid.muted=false; vid.volume=1;
     const p=vid.play(); if(p&&p.then) p.then(()=>{ vid.pause(); vid.currentTime=0 }).catch(()=>{});   // autorisation du son par le geste
     setTimeout(()=>{ pro.classList.add("vid","play");
-      vid.muted=false; vid.volume=1; vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) },5200); };
+      vid.muted=false; vid.volume=1; vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) },2900); };
 })();
 
 /* ---------- Ouverture ---------- */
