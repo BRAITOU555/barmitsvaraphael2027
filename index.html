@@ -578,6 +578,27 @@ body.go #intro.opening .tap{animation:none}
 #intro::before{content:"";position:absolute;left:50%;top:56%;width:130vmax;height:130vmax;margin:-65vmax 0 0 -65vmax;border-radius:50%;pointer-events:none;z-index:0;opacity:0;background:radial-gradient(circle,rgba(255,236,170,.85) 0,rgba(255,236,170,.35) 22%,rgba(255,236,170,0) 52%)}
 body.go #intro::before{animation:bloom 2.6s ease-out}
 #intro.opening::before{animation:none!important;opacity:0}
+
+/* ===== Transition n°3 : scène de nuit, projecteur, l'enveloppe descend dans la lumière ===== */
+@keyframes lantern{0%{opacity:0;transform:translateY(-150px) rotate(-3deg)}55%{opacity:1;transform:translateY(8px) rotate(1.5deg)}80%{transform:translateY(-3px) rotate(-.6deg)}100%{opacity:1;transform:none}}
+@keyframes spotOn{0%{opacity:0}100%{opacity:1}}
+@keyframes fall{0%{opacity:0;transform:translateY(0) rotate(0)}12%{opacity:.95}100%{opacity:0;transform:translateY(112vh) translateX(24px) rotate(160deg)}}
+#intro.night{background:radial-gradient(ellipse at 50% 38%,#16276a 0,#0a1237 62%,#030719 100%)}
+#intro.night .guest{color:#f7efdc}
+#intro.night .tap{color:#f3dc98}
+#intro.night .bsd,#intro.night .inv{color:#e8c35c}
+#intro.night .rule{background:linear-gradient(90deg,transparent,#e8c35c,transparent)}
+#intro::before{display:none}
+#intro::after{content:"";position:absolute;left:50%;top:0;width:150vmax;height:100%;transform:translateX(-50%);pointer-events:none;z-index:0;opacity:0;
+  background:linear-gradient(180deg,rgba(255,238,200,.55),rgba(255,238,200,.10) 70%,rgba(255,238,200,0));clip-path:polygon(47.5% 0,52.5% 0,66% 100%,34% 100%);filter:blur(10px)}
+body.go #intro.night::after{animation:spotOn 1.6s ease-out .3s forwards}
+#intro.opening::after{opacity:0!important;animation:none!important;transition:opacity .6s}
+#intro .floor{position:absolute;left:50%;top:60%;width:120vmin;height:46vmin;transform:translateX(-50%);pointer-events:none;z-index:0;border-radius:50%;opacity:0;background:radial-gradient(ellipse,rgba(255,230,160,.5) 0,rgba(255,230,160,0) 65%)}
+body.go #intro .floor{animation:spotOn 2s ease-out 1s forwards}
+#intro.opening .floor{opacity:0!important;animation:none!important}
+body.go .scene{animation:lantern 2.4s .5s cubic-bezier(.25,.7,.3,1) backwards,bob 3.8s 3s ease-in-out infinite!important}
+body.go .scene.open{animation:none!important}
+#intro .dust{top:-24px;bottom:auto;animation-name:fall!important}
 </style>
 </head>
 <body class="locked">
@@ -665,6 +686,7 @@ const ART = {
   <div class="rule"></div>
   <div class="guest" id="guestName"></div>
 
+  <div class="floor"></div>
   <div class="scene" id="scene" role="button" tabindex="0" aria-label="Ouvrir l'invitation">
     <div class="env">
       <div class="env-back"></div>
@@ -992,7 +1014,7 @@ const FW=(()=>{
 
 
 /* ---------- Prologue : film puis arrivée ---------- */
-(()=>{ const pro=$("pro"),vid=$("proVid"); let done=false;
+(()=>{ $("intro").classList.add("night"); const pro=$("pro"),vid=$("proVid"); let done=false;
   function finish(){ if(done) return; done=true;
     pro.style.transition="opacity 1s ease, visibility 1s"; document.body.classList.add("go"); pro.classList.add("gone");   // fondu de 2 s : l'enveloppe apparaît dessous
     const v0=vid.volume,t0=performance.now(); const fv=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/1000); try{vid.volume=v0*(1-k)}catch(e){} if(k>=1){clearInterval(fv);try{vid.pause()}catch(e){}} },50);
