@@ -42,7 +42,8 @@ body.locked{overflow:hidden}
 .caps{font-family:'Jost',sans-serif;font-weight:400;letter-spacing:.3em;text-transform:uppercase;font-size:.72rem;color:var(--muted)}
 
 /* ================= INTRO ================= */
-#intro{position:fixed;inset:0;z-index:60;background:radial-gradient(ellipse at 50% 35%,#fffdf8 0,var(--ivory) 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;transition:opacity 1s ease,visibility 1s}
+#intro{position:fixed;inset:0;z-index:60;background:radial-gradient(ellipse at 50% 35%,#fffdf8 0,var(--ivory) 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;transition:opacity 1s ease,visibility 1s,background 1.2s ease}
+#intro.night{background:radial-gradient(ellipse at 50% 40%,#1b2a6b 0,#0a1135 70%,#050a22 100%)}
 #intro.gone{opacity:0;visibility:hidden}
 #intro .bsd,#intro .inv,#intro .guest,#intro .rule,#intro .tap{transition:opacity .7s ease}
 #intro.opening .bsd,#intro.opening .inv,#intro.opening .guest,#intro.opening .rule,#intro.opening .tap{opacity:0;visibility:hidden;pointer-events:none;transition:none}
@@ -578,58 +579,83 @@ function startMusic(){ if(bgm){ bgm.play().then(()=>$("snd").classList.remove("m
 $("snd").classList.add("muted");
 
 
-/* ---------- Feu d'artifice + bruitage (synthétisé) ---------- */
+/* ---------- Feu d'artifice réaliste + bruitage (synthétisé) ---------- */
 const FW=(()=>{
   const cv=$("fw"), cx=cv.getContext("2d"); let W,H,dpr=Math.min(2,window.devicePixelRatio||1);
   function size(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
   size(); addEventListener("resize",size);
-  const COL=["#e0475f","#2457b8","#f08a24","#18a58f","#e8b630","#a23bd1","#ff5fa2"];
-  let rockets=[],parts=[],running=false,spawnT=null,AC=null,master=null;
+  const PAL=[["#ff3b4e","#ff9aa5"],["#3d8bff","#a9ceff"],["#ffd23f","#fff2b0"],["#35e0b5","#b2fbe9"],["#c45bff","#ecc4ff"],["#ff8a2b","#ffd0a3"],["#ffffff","#cfe3ff"]];
+  let rockets=[],parts=[],running=false,spawnT=null,AC=null,master=null,verb=null;
   function audio(){
     if(AC) return AC;
-    try{ AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=.55; master.connect(AC.destination);}catch(e){AC=null}
+    try{
+      AC=new (window.AudioContext||window.webkitAudioContext)();
+      const comp=AC.createDynamicsCompressor(); master=AC.createGain(); master.gain.value=.9; master.connect(comp); comp.connect(AC.destination);
+      const len=AC.sampleRate*2.2, ir=AC.createBuffer(2,len,AC.sampleRate);
+      for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}
+      verb=AC.createConvolver(); verb.buffer=ir; const vg=AC.createGain(); vg.gain.value=.55; verb.connect(vg); vg.connect(master);
+    }catch(e){AC=null}
     return AC;
   }
-  function noiseBuf(d){const n=AC.sampleRate*d,b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;return b}
-  function whistle(){ if(!AC) return; const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
-    o.type="sine";o.frequency.setValueAtTime(500,t);o.frequency.exponentialRampToValueAtTime(1500,t+.55);
-    g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.05,t+.1);g.gain.exponentialRampToValueAtTime(.0001,t+.6);
-    o.connect(g);g.connect(master);o.start(t);o.stop(t+.65) }
+  const nb={}; function noise(d){const k=d.toFixed(2); if(nb[k]) return nb[k]; const n=(AC.sampleRate*d)|0,b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;return nb[k]=b}
+  function out(node,wet){node.connect(master); if(wet&&verb) node.connect(verb)}
+  function whoosh(){ if(!AC) return; const t=AC.currentTime,n=AC.createBufferSource();n.buffer=noise(1);
+    const f=AC.createBiquadFilter();f.type="bandpass";f.Q.value=2;f.frequency.setValueAtTime(400,t);f.frequency.exponentialRampToValueAtTime(2600,t+.8);
+    const g=AC.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.18,t+.25);g.gain.exponentialRampToValueAtTime(.0001,t+.85);
+    n.connect(f);f.connect(g);out(g,false);n.start(t);n.stop(t+.9)}
+  function pop(t,vol,hp){ const c=AC.createBufferSource();c.buffer=noise(.06);
+    const f=AC.createBiquadFilter();f.type="highpass";f.frequency.value=hp;
+    const g=AC.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+.05);
+    c.connect(f);f.connect(g);out(g,true);c.start(t)}
   function boom(vol){ if(!AC) return; const t=AC.currentTime;
-    const n=AC.createBufferSource();n.buffer=noiseBuf(1.4);
-    const f=AC.createBiquadFilter();f.type="lowpass";f.frequency.setValueAtTime(2400,t);f.frequency.exponentialRampToValueAtTime(140,t+1.1);
-    const g=AC.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+1.3);
-    n.connect(f);f.connect(g);g.connect(master);n.start(t);
-    const o=AC.createOscillator(),og=AC.createGain();o.type="sine";o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(32,t+.5);
-    og.gain.setValueAtTime(vol*1.2,t);og.gain.exponentialRampToValueAtTime(.0001,t+.6);o.connect(og);og.connect(master);o.start(t);o.stop(t+.65);
-    for(let i=0;i<14;i++){ const ct=t+.18+Math.random()*.9,c=AC.createBufferSource();c.buffer=noiseBuf(.04);
-      const cf=AC.createBiquadFilter();cf.type="highpass";cf.frequency.value=2500+Math.random()*3000;
-      const cg=AC.createGain();cg.gain.setValueAtTime(vol*.35*Math.random(),ct);cg.gain.exponentialRampToValueAtTime(.0001,ct+.04);
-      c.connect(cf);cf.connect(cg);cg.connect(master);c.start(ct) } }
-  function launch(){
-    const x=W*(.12+Math.random()*.76), ty=H*(.14+Math.random()*.34);
-    rockets.push({x,y:H+10,vy:-(H-ty)/48,ty,col:COL[(Math.random()*COL.length)|0]});
-    whistle();
+    pop(t,vol*1.6,1200);                                   // claquement sec
+    const n=AC.createBufferSource();n.buffer=noise(1.6);   // grondement
+    const f=AC.createBiquadFilter();f.type="lowpass";f.frequency.setValueAtTime(1800,t);f.frequency.exponentialRampToValueAtTime(90,t+1.2);
+    const g=AC.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+1.5);
+    n.connect(f);f.connect(g);out(g,true);n.start(t);
+    const o=AC.createOscillator(),og=AC.createGain();o.type="sine";o.frequency.setValueAtTime(95,t);o.frequency.exponentialRampToValueAtTime(28,t+.45);
+    og.gain.setValueAtTime(vol*1.4,t);og.gain.exponentialRampToValueAtTime(.0001,t+.6);o.connect(og);out(og,false);o.start(t);o.stop(t+.7);
+    for(let i=0;i<26;i++) pop(t+.25+Math.random()*1.4,vol*.25*Math.random(),3000+Math.random()*3500) }  // crépitements
+  function petards(n){ if(!AC) return; const t=AC.currentTime; for(let i=0;i<n;i++){ pop(t+i*(.045+Math.random()*.05),.5+Math.random()*.5,1500+Math.random()*1500) } }
+  function launch(x,ty,pi){
+    x=x??W*(.14+Math.random()*.72); ty=ty??H*(.13+Math.random()*.32);
+    rockets.push({x,y:H+10,px:x,py:H+10,vy:-(H-ty)/42,ty,pal:PAL[pi??((Math.random()*PAL.length)|0)],sx:(Math.random()-.5)*.6});
+    whoosh();
   }
   function explode(r){
-    const n=64+((Math.random()*30)|0), c2=COL[(Math.random()*COL.length)|0], two=Math.random()<.5;
-    for(let i=0;i<n;i++){const a=Math.PI*2*i/n+Math.random()*.1,sp=2+Math.random()*3.6;
-      parts.push({x:r.x,y:r.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,dec:.009+Math.random()*.008,col:two&&i%2?c2:r.col,s:2.2+Math.random()*1.6})}
-    boom(.35+Math.random()*.25);
+    const type=(Math.random()*4)|0, [c1,c2]=r.pal, n=type===3?90:110+((Math.random()*40)|0), big=Math.min(W,H)/390;
+    for(let i=0;i<n;i++){
+      const a=Math.PI*2*i/n+Math.random()*.05, sp=(type===2?1.6+Math.random()*1.4:(type===3?3.4:2+Math.random()*3.8))*big*1.25;
+      parts.push({x:r.x,y:r.y,px:r.x,py:r.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,
+        dec:type===2?.0065:.011+Math.random()*.008,col:i%3?c1:c2,s:1.8*big+Math.random()*1.2,g:type===2?.07:.045,glit:type===0||type===2,fr:type===2?.97:.982})
+    }
+    if(type===1){ for(let i=0;i<40;i++){const a=Math.random()*7,sp=.8+Math.random()*1.6;parts.push({x:r.x,y:r.y,px:r.x,py:r.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,dec:.016,col:"#fff7d6",s:1.6,g:.04,fr:.98})} }
+    boom(.4+Math.random()*.25);
   }
   function frame(){
-    cx.clearRect(0,0,W,H);
-    rockets=rockets.filter(r=>{r.y+=r.vy;cx.fillStyle=r.col;cx.beginPath();cx.arc(r.x,r.y,2.4,0,7);cx.fill();
+    cx.globalCompositeOperation="destination-out"; cx.fillStyle="rgba(0,0,0,.2)"; cx.fillRect(0,0,W,H);
+    cx.globalCompositeOperation="lighter"; cx.lineCap="round";
+    rockets=rockets.filter(r=>{r.px=r.x;r.py=r.y;r.x+=r.sx;r.y+=r.vy;r.vy*=.992;
+      cx.strokeStyle="#ffe9b0";cx.lineWidth=2.4;cx.beginPath();cx.moveTo(r.px,r.py);cx.lineTo(r.x,r.y+10);cx.stroke();
       if(r.y<=r.ty){explode(r);return false}return true});
-    parts=parts.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.vy=p.vy*.985+.045;p.life-=p.dec;
-      if(p.life<=0) return false;cx.globalAlpha=Math.max(0,p.life);cx.fillStyle=p.col;cx.beginPath();cx.arc(p.x,p.y,p.s*p.life+.4,0,7);cx.fill();cx.globalAlpha=1;return true});
+    parts=parts.filter(p=>{p.px=p.x;p.py=p.y;p.x+=p.vx;p.y+=p.vy;p.vx*=p.fr;p.vy=p.vy*p.fr+p.g;p.life-=p.dec;if(p.life<=0) return false;
+      const fl=p.glit&&p.life<.55&&Math.random()<.35?0.2:1;
+      cx.globalAlpha=Math.max(0,Math.min(1,p.life*1.4))*fl;cx.strokeStyle=p.col;cx.lineWidth=p.s*(.5+p.life*.7);
+      cx.beginPath();cx.moveTo(p.px,p.py);cx.lineTo(p.x,p.y);cx.stroke();
+      cx.fillStyle=p.col;cx.beginPath();cx.arc(p.x,p.y,p.s*.55*p.life+.3,0,7);cx.fill();cx.globalAlpha=1;return true});
     if(running||rockets.length||parts.length) requestAnimationFrame(frame); else cx.clearRect(0,0,W,H);
   }
   return {
-    start(ms){
-      if(running) return; running=true; const a=audio(); if(a&&a.state==="suspended") a.resume();
-      const end=performance.now()+ms; launch(); setTimeout(launch,250); setTimeout(launch,520);
-      spawnT=setInterval(()=>{ if(performance.now()>end){clearInterval(spawnT);running=false;return} launch(); if(Math.random()<.5) setTimeout(launch,200) },700);
+    unlock(){ const a=audio(); if(a&&a.state==="suspended") a.resume() },
+    show(ms){
+      if(running) return; running=true; this.unlock();
+      petards(14);
+      const t0=performance.now(); let k=0;
+      launch(W*.5,H*.2,2);
+      setTimeout(()=>{launch(W*.25,H*.3,0);launch(W*.75,H*.3,1)},350);
+      spawnT=setInterval(()=>{ const el=performance.now()-t0;
+        if(el>ms){clearInterval(spawnT);running=false;return}
+        launch(); if(el>ms*.55) setTimeout(launch,120); if(el>ms*.8){setTimeout(launch,220);setTimeout(()=>launch(),330)} },420);
       requestAnimationFrame(frame);
     }
   };
@@ -641,12 +667,13 @@ function openInvite(){
   if(opened) return; opened = true;
   $("intro").classList.add("opening");
   const sc=$("scene");
-  FW.start(9500);   // feux d'artifice + bruitage dès le clic
+  FW.unlock();
   sc.classList.add("open");              // rabat s'ouvre, la carte sort
   if(bgm){ bgm.muted=true; bgm.play().then(()=>{bgm.pause();bgm.currentTime=0;bgm.muted=false}).catch(()=>{bgm.muted=false}); }  // déverrouille l'audio, sans son
   setTimeout(()=>sc.classList.add("out"),2500);      // l'enveloppe disparaît
   setTimeout(()=>sc.classList.add("flipped"),3700);  // la carte se retourne
-  setTimeout(()=>sc.classList.add("enter"),5700);    // la carte s'ouvre sur l'invitation
+  setTimeout(()=>{ $("intro").classList.add("night"); FW.show(3300); },5100);   // nuit + feu d'artifice juste avant l'ouverture
+  setTimeout(()=>sc.classList.add("enter"),8700);    // la carte s'ouvre sur l'invitation
   setTimeout(()=>{
     $("intro").classList.add("gone");
     startMusic();
@@ -655,7 +682,7 @@ function openInvite(){
     $("main").classList.add("show");
     window.scrollTo(0,0);
     observe();
-  }, 6700);
+  }, 9700);
 }
 $("openBtn").onclick = openInvite;
 $("scene").onclick = openInvite;
