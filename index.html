@@ -363,6 +363,48 @@ body.go #intro.opening .tap{animation:none}
 #pro .flash{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 46%,rgba(255,236,170,.95) 0,rgba(255,236,170,.0) 55%)}
 #pro.out .flash{animation:fl 1.3s ease-out}
 @keyframes fl{0%{opacity:0;transform:scale(.4)}35%{opacity:1}100%{opacity:0;transform:scale(1.6)}}
+
+/* ===== Heikhal (arche sainte) ===== */
+#pro .cur,#pro .pelmet{display:none!important}
+#pro .stage{opacity:0;transition:opacity 1.3s ease}
+#pro.vid .stage{opacity:1}
+#pro .ark{position:absolute;left:50%;top:46%;width:min(80vw,380px);aspect-ratio:10/14;transform:translate(-50%,-50%);z-index:3;transition:transform 2s cubic-bezier(.6,0,.3,1),opacity 1.4s ease .5s;perspective:1500px}
+#pro.vid .ark{transform:translate(-50%,-50%) scale(3.2);opacity:0;pointer-events:none}
+#pro .ark-frame{position:absolute;inset:0;border-radius:50% 50% 6px 6px / 15% 15% 6px 6px;padding:11px;background:linear-gradient(135deg,#f6dc94,#b98a35 35%,#f3d98c 60%,#8a6420);box-shadow:0 28px 60px -20px rgba(70,45,10,.6),inset 0 0 0 2px rgba(255,255,255,.4)}
+#pro .ark-top{position:absolute;left:0;right:0;top:0;height:25%;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:4;pointer-events:none}
+#pro .ark-top svg{width:34%;height:auto;filter:drop-shadow(0 2px 2px rgba(80,50,10,.45))}
+#pro .ark-top .ins{font-family:'Frank Ruhl Libre',serif;font-size:clamp(.62rem,2.5vw,.85rem);color:#5b3a0b;letter-spacing:.04em;margin-top:2px;text-shadow:0 1px 0 rgba(255,255,255,.5);direction:rtl}
+#pro .ark-in{position:absolute;left:11px;right:11px;top:25%;bottom:11px;border-radius:2px;overflow:visible;background:radial-gradient(circle at 50% 30%,#fff0b8 0,#f0b64a 28%,#9a5a18 62%,#3a1a07 100%);box-shadow:inset 0 0 40px rgba(0,0,0,.55);perspective:1200px}
+#pro .ark-in .shelf{position:absolute;left:0;right:0;bottom:0;height:7%;background:linear-gradient(180deg,#d6a74a,#7a5214);box-shadow:0 -4px 10px rgba(0,0,0,.35)}
+#pro .sc{position:absolute;bottom:7%;width:25%;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+#pro .sc .crown{width:70%;height:15px;background:linear-gradient(180deg,#fff0b8,#d9a93f);clip-path:polygon(0 100%,0 30%,18% 60%,34% 0,50% 55%,66% 0,82% 60%,100% 30%,100% 100%);margin-bottom:-2px;position:relative;z-index:2}
+#pro .sc .rod{width:5px;height:12px;background:linear-gradient(90deg,#f6dc94,#a8741a);border-radius:2px}
+#pro .sc .mantle{width:100%;border-radius:10px 10px 4px 4px;position:relative;border:2px solid #e3bf62;box-shadow:inset 0 0 14px rgba(0,0,0,.45)}
+#pro .sc .mantle::before{content:"";position:absolute;left:50%;top:18%;width:56%;height:22%;transform:translateX(-50%);border-radius:4px;background:linear-gradient(135deg,#fff0b8,#c8932f);box-shadow:0 0 0 2px rgba(120,80,15,.5)}
+#pro .sc .mantle::after{content:"";position:absolute;left:8%;right:8%;bottom:6%;height:3px;background:repeating-linear-gradient(90deg,#e3bf62 0 4px,transparent 4px 8px)}
+#pro .sc.a{left:6%;height:70%}#pro .sc.a .mantle{height:78%;background:linear-gradient(90deg,#5a0b19,#8e1c30 50%,#5a0b19)}
+#pro .sc.b{left:37.5%;height:82%}#pro .sc.b .mantle{height:82%;background:linear-gradient(90deg,#12306f,#2552b3 50%,#12306f)}
+#pro .sc.c{left:69%;height:70%}#pro .sc.c .mantle{height:78%;background:linear-gradient(90deg,#0b4a33,#13805a 50%,#0b4a33)}
+#pro .lamp{position:absolute;left:50%;top:21%;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+#pro .lamp i{width:1px;height:20px;background:#6b4a14;display:block}
+#pro .lamp b{width:10px;height:15px;border-radius:50% 50% 45% 45%;background:radial-gradient(circle at 50% 70%,#fff6c8,#ffb62e 60%,#ff7a00);box-shadow:0 0 14px 5px rgba(255,170,40,.75);animation:flick .15s infinite alternate}
+@keyframes flick{from{transform:scale(1,1);opacity:.9}to{transform:scale(.92,1.08);opacity:1}}
+#pro .door{position:absolute;top:0;bottom:0;width:50%;z-index:3;backface-visibility:hidden;transition:transform 2.6s cubic-bezier(.5,0,.2,1)}
+#pro .door.l{left:0;transform-origin:0 50%}
+#pro .door.r{right:0;transform-origin:100% 50%}
+#pro .door .leaf{position:absolute;inset:0;background:linear-gradient(135deg,#f1d27a,#b8862b 38%,#f6dc94 58%,#9a6a1c);box-shadow:inset 0 0 0 3px #8a6420,inset 0 0 0 6px #f6dc94,inset 0 0 18px rgba(0,0,0,.35)}
+#pro .door .panel{position:absolute;left:14%;right:14%;top:7%;height:40%;border:2px solid #8a6420;box-shadow:inset 0 0 0 3px rgba(255,235,170,.7),inset 0 0 12px rgba(0,0,0,.25);border-radius:2px}
+#pro .door .panel.p2{top:52%;height:40%}
+#pro .door .star{position:absolute;left:50%;top:50%;width:46%;transform:translate(-50%,-50%)}
+#pro .door .knob{position:absolute;top:50%;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6d0,#8a6420);box-shadow:0 2px 3px rgba(0,0,0,.5)}
+#pro .door.l .knob{right:8px}#pro .door.r .knob{left:8px}
+#pro.open .door.l{transform:rotateY(-112deg)}
+#pro.open .door.r{transform:rotateY(112deg)}
+#pro.open .ark-in{animation:glow 2.6s ease-out forwards}
+@keyframes glow{from{box-shadow:inset 0 0 40px rgba(0,0,0,.55)}to{box-shadow:inset 0 0 30px rgba(0,0,0,.2),0 0 70px 14px rgba(255,200,90,.65)}}
+#pro .gate{justify-content:flex-end;padding-bottom:7vh;background:none}
+#pro .gate .gseal,#pro .gate .gbsd{display:none}
+#pro .gate .gtxt{color:var(--gold-deep);text-shadow:none}
 </style>
 </head>
 <body class="locked">
@@ -434,10 +476,25 @@ const ART = {
     <div class="frame"><video id="proVid" playsinline webkit-playsinline preload="auto"><source src="ouverture.mp4" type="video/mp4"><source src="ouverture.webm" type="video/webm"></video></div>
     <button class="skip" id="proSkip" type="button">Passer</button>
   </div>
-  <div class="pelmet"></div><div class="flash"></div>
+  <div class="flash"></div>
+  <div class="ark" id="ark"><div class="ark-frame">
+    <div class="ark-top">
+      <svg viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#d9a93f" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
+      <span class="ins">דע לפני מי אתה עומד</span>
+    </div>
+    <div class="lamp"><i></i><b></b></div>
+    <div class="ark-in">
+      <div class="sc a"><span class="rod"></span><span class="crown"></span><div class="mantle"></div></div>
+      <div class="sc b"><span class="rod"></span><span class="crown"></span><div class="mantle"></div></div>
+      <div class="sc c"><span class="rod"></span><span class="crown"></span><div class="mantle"></div></div>
+      <div class="shelf"></div>
+      <div class="door l"><div class="leaf"><div class="panel"></div><div class="panel p2"></div><svg viewBox="0 0 100 100" class="star"><polygon points="50,6 88,72 12,72" fill="none" stroke="#6b4a14" stroke-width="3.5"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#6b4a14" stroke-width="3.5"/></svg><span class="knob"></span></div></div>
+      <div class="door r"><div class="leaf"><div class="panel"></div><div class="panel p2"></div><svg viewBox="0 0 100 100" class="star"><polygon points="50,6 88,72 12,72" fill="none" stroke="#6b4a14" stroke-width="3.5"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#6b4a14" stroke-width="3.5"/></svg><span class="knob"></span></div></div>
+    </div>
+  </div></div>
   <div class="cur cl"></div><div class="cur cr"></div>
   <button class="gate" id="proGate" type="button" aria-label="Ouvrir">
-    <span class="gbsd">בס״ד</span><span class="gseal">R</span><span class="gtxt">Touchez pour entrer</span>
+    <span class="gbsd">בס״ד</span><span class="gseal">R</span><span class="gtxt">Touchez pour ouvrir le Heikhal</span>
   </button>
 </div>
 <canvas id="fw"></canvas>
@@ -776,8 +833,11 @@ const FW=(()=>{
   vid.addEventListener("timeupdate",()=>{ if(vid.duration&&vid.duration-vid.currentTime<.7) finish() });
   $("proSkip").onclick=finish;
   $("proGate").onclick=()=>{ MUS.unlock(); FW.unlock();
-    pro.classList.add("open","play"); setTimeout(()=>pro.classList.add("vid"),1800); vid.muted=false; vid.volume=1;
-    vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }); };
+    pro.classList.add("open");
+    vid.muted=false; vid.volume=1;
+    const p=vid.play(); if(p&&p.then) p.then(()=>{ vid.pause(); vid.currentTime=0 }).catch(()=>{});   // autorisation du son par le geste
+    setTimeout(()=>{ pro.classList.add("vid","play");
+      vid.muted=false; vid.volume=1; vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) },2900); };
 })();
 
 /* ---------- Ouverture ---------- */
