@@ -587,20 +587,18 @@ $("rsvpForm").addEventListener("submit", async ev=>{
 $("editBtn").onclick = ()=>{ $("thanks").classList.remove("show"); $("rsvpForm").style.display = ""; };
 
 /* ---------- Musique ---------- */
-let bgm = null;
-if(CONFIG.musique){
-  bgm = new Audio(CONFIG.musique); bgm.loop = true; bgm.volume = .6; bgm.preload = "none";
-  bgm.addEventListener("error",()=>{ $("snd").classList.remove("ok"); bgm = null; });
-  $("snd").classList.add("ok");
-  $("snd").onclick = ()=>{
-    if(!bgm) return;
-    if(bgm.paused){ bgm.play().catch(()=>{}); $("snd").classList.remove("muted"); }
-    else { bgm.pause(); $("snd").classList.add("muted"); }
-  };
-}
-function startMusic(){ if(!bgm) return;
-  const go=()=>{ bgm.muted=false; $("snd").classList.remove("muted"); let v=0; const iv=setInterval(()=>{ v=Math.min(.6,v+.04); bgm.volume=v; if(v>=.6) clearInterval(iv) },100) };
-  if(bgm.paused){ bgm.muted=false; bgm.volume=0; bgm.play().then(go).catch(()=>$("snd").classList.add("muted")) } else go(); }
+const MUS=(()=>{ let ac=null,gain=null,buf=null,src=null,playing=false,wanted=false;
+  function init(){ if(ac||!CONFIG.musique) return;
+    try{ ac=new (window.AudioContext||window.webkitAudioContext)(); gain=ac.createGain(); gain.gain.value=0; gain.connect(ac.destination);
+      fetch(CONFIG.musique).then(r=>r.arrayBuffer()).then(d=>ac.decodeAudioData(d,x=>{buf=x; if(wanted) play()},()=>{})).catch(()=>{}); }catch(e){ac=null} }
+  function unlock(){ init(); if(ac&&ac.state==="suspended") ac.resume() }
+  function play(){ if(!ac||!buf||playing) return; playing=true; src=ac.createBufferSource(); src.buffer=buf; src.loop=true; src.connect(gain); src.start();
+    gain.gain.cancelScheduledValues(ac.currentTime); gain.gain.setValueAtTime(0,ac.currentTime); gain.gain.linearRampToValueAtTime(.6,ac.currentTime+2.5); $("snd").classList.remove("muted") }
+  return { unlock, start(){ wanted=true; unlock(); play() },
+    toggle(){ if(!ac) return; if(!playing){ wanted=true; play(); return }
+      if(ac.state==="running"){ ac.suspend(); $("snd").classList.add("muted") } else { ac.resume(); $("snd").classList.remove("muted") } } } })();
+if(CONFIG.musique){ $("snd").classList.add("ok"); $("snd").onclick=()=>MUS.toggle(); }
+function startMusic(){ MUS.start() }
 $("snd").classList.add("muted");
 
 
@@ -708,7 +706,7 @@ function openInvite(){
   const sc=$("scene");
   FW.unlock();
   sc.classList.add("open");              // rabat s'ouvre, la carte sort
-  if(bgm){ bgm.muted=true; bgm.volume=0; bgm.play().catch(()=>{}); }   // démarre en silence (autorisé par le clic), le son monte après les feux
+  MUS.unlock();   // prépare l'audio (sans aucun son) ; la chanson ne démarre qu'après les feux
   setTimeout(()=>sc.classList.add("out"),2500);      // l'enveloppe disparaît
   setTimeout(()=>sc.classList.add("flipped"),3700);  // la carte se retourne
   setTimeout(()=>{ $("intro").classList.add("night"); FW.show(3300); },5100);   // nuit + feu d'artifice juste avant l'ouverture
