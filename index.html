@@ -405,6 +405,31 @@ body.go #intro.opening .tap{animation:none}
 #pro .gate{justify-content:flex-end;padding-bottom:7vh;background:none}
 #pro .gate .gseal,#pro .gate .gbsd{display:none}
 #pro .gate .gtxt{color:var(--gold-deep);text-shadow:none}
+
+/* ===== Parochet : rideau du Heikhal ===== */
+#pro .par{position:absolute;top:0;bottom:0;width:50.3%;z-index:6;overflow:hidden;transition:transform 2.3s cubic-bezier(.62,0,.22,1);
+  background:linear-gradient(90deg,#4a0b17,#7e1a2c 50%,#5c1020);box-shadow:0 0 30px rgba(20,4,8,.5)}
+#pro .par.pl{left:0;transform-origin:0 50%}
+#pro .par.pr{right:0;transform-origin:100% 50%}
+#pro .par .orn{position:absolute;top:0;bottom:0;width:198.6%;
+  background:repeating-linear-gradient(90deg,rgba(0,0,0,.40) 0,rgba(0,0,0,.04) 9px,rgba(255,170,160,.15) 18px,rgba(0,0,0,.04) 27px,rgba(0,0,0,.40) 38px),
+  radial-gradient(ellipse at 50% 40%,rgba(255,120,110,.22),transparent 60%),linear-gradient(90deg,#5a0f1e,#8a1d31 50%,#5a0f1e)}
+#pro .par.pl .orn{left:0}#pro .par.pr .orn{right:0}
+#pro .par .bd{position:absolute;inset:5% 5% 9% 5%;border:2px solid #e3bf62;box-shadow:inset 0 0 0 4px rgba(90,15,30,.9),inset 0 0 0 5px #e3bf62;pointer-events:none}
+#pro .par .crn{position:absolute;left:50%;top:9%;width:30%;transform:translateX(-50%);filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+#pro .par .mag{position:absolute;left:50%;top:36%;width:46%;transform:translateX(-50%);filter:drop-shadow(0 0 8px rgba(255,210,110,.55))}
+#pro .par .kt{position:absolute;left:0;right:0;top:67%;text-align:center;font-family:'Frank Ruhl Libre',serif;font-size:clamp(1rem,4.6vw,1.45rem);color:#f0cf7a;letter-spacing:.14em;text-shadow:0 1px 3px rgba(0,0,0,.6);direction:rtl}
+#pro .par .dm{position:absolute;left:0;right:0;top:76%;display:flex;justify-content:center;gap:14px}
+#pro .par .dm i{width:8px;height:8px;background:#e3bf62;transform:rotate(45deg)}
+#pro .par .col{position:absolute;top:12%;bottom:14%;width:5px;background:repeating-linear-gradient(180deg,#e3bf62 0 6px,transparent 6px 11px);opacity:.8}
+#pro .par .col.c1{left:12%}#pro .par .col.c2{right:12%}
+#pro .par .fr{position:absolute;left:0;right:0;bottom:0;height:7%;background:linear-gradient(180deg,#b98a35,#f0cf7a);-webkit-mask:repeating-linear-gradient(90deg,#000 0 3px,transparent 3px 6px);mask:repeating-linear-gradient(90deg,#000 0 3px,transparent 3px 6px)}
+#pro .par::after{content:"";position:absolute;top:0;bottom:0;width:6px;background:linear-gradient(90deg,#8a6420,#f6dc94 45%,#8a6420)}
+#pro .par.pl::after{right:0}#pro .par.pr::after{left:0}
+#pro.open .par.pl{transform:translateX(-3%) scaleX(.13)}
+#pro.open .par.pr{transform:translateX(3%) scaleX(.13)}
+#pro .door{transition:transform 2.5s cubic-bezier(.5,0,.2,1) 1.6s}
+#pro.open .ark-in{animation:glow 2.6s ease-out 1.6s both}
 </style>
 </head>
 <body class="locked">
@@ -488,6 +513,14 @@ const ART = {
       <div class="sc b"><span class="rod"></span><span class="crown"></span><div class="mantle"></div></div>
       <div class="sc c"><span class="rod"></span><span class="crown"></span><div class="mantle"></div></div>
       <div class="shelf"></div>
+      <div class="par pl"><div class="orn"><div class="bd"></div><span class="col c1"></span><span class="col c2"></span>
+          <svg class="crn" viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#e8c35c" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
+          <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
+          <div class="kt">כתר תורה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
+      <div class="par pr"><div class="orn"><div class="bd"></div><span class="col c1"></span><span class="col c2"></span>
+          <svg class="crn" viewBox="0 0 120 56"><path d="M8 52 L8 22 L28 38 L46 8 L60 34 L74 8 L92 38 L112 22 L112 52 Z" fill="#e8c35c" stroke="#7a5214" stroke-width="2.5" stroke-linejoin="round"/><circle cx="46" cy="8" r="4" fill="#e0475f"/><circle cx="74" cy="8" r="4" fill="#2457b8"/><circle cx="60" cy="30" r="4.5" fill="#18a58f"/></svg>
+          <svg class="mag" viewBox="0 0 100 100"><polygon points="50,6 88,72 12,72" fill="none" stroke="#f0cf7a" stroke-width="4"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#f0cf7a" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="#f0cf7a" opacity=".9"/></svg>
+          <div class="kt">כתר תורה</div><div class="dm"><i></i><i></i><i></i></div><div class="fr"></div></div></div>
       <div class="door l"><div class="leaf"><div class="panel"></div><div class="panel p2"></div><svg viewBox="0 0 100 100" class="star"><polygon points="50,6 88,72 12,72" fill="none" stroke="#6b4a14" stroke-width="3.5"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#6b4a14" stroke-width="3.5"/></svg><span class="knob"></span></div></div>
       <div class="door r"><div class="leaf"><div class="panel"></div><div class="panel p2"></div><svg viewBox="0 0 100 100" class="star"><polygon points="50,6 88,72 12,72" fill="none" stroke="#6b4a14" stroke-width="3.5"/><polygon points="50,94 12,28 88,28" fill="none" stroke="#6b4a14" stroke-width="3.5"/></svg><span class="knob"></span></div></div>
     </div>
@@ -837,7 +870,7 @@ const FW=(()=>{
     vid.muted=false; vid.volume=1;
     const p=vid.play(); if(p&&p.then) p.then(()=>{ vid.pause(); vid.currentTime=0 }).catch(()=>{});   // autorisation du son par le geste
     setTimeout(()=>{ pro.classList.add("vid","play");
-      vid.muted=false; vid.volume=1; vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) },2900); };
+      vid.muted=false; vid.volume=1; vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) },5200); };
 })();
 
 /* ---------- Ouverture ---------- */
