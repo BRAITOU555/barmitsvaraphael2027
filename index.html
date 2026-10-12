@@ -34,6 +34,7 @@ body.locked{overflow:hidden}
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;
   transform:translateY(0);transition:transform 1.4s cubic-bezier(.5,.05,.2,1) .9s;z-index:2}
 .card::before{content:"";position:absolute;inset:8px;border:1px solid var(--gold-soft);border-radius:2px}
+.card .cic svg{width:26px;height:26px;color:var(--gold)}
 .card small{font-size:.5rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold)}
 .card b{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(1.4rem,5.2vw,2rem);color:var(--ink)}
 .card i{font-family:'Cormorant Garamond',serif;font-size:.85rem;color:var(--muted)}
@@ -91,6 +92,11 @@ h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;font
 .ev p{color:var(--muted);line-height:1.7}
 .ev a{display:inline-block;margin-top:16px;color:var(--ink);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:3px}
 .ev a:hover{color:var(--gold)}
+.icons{display:flex;gap:26px;justify-content:center;color:var(--gold);margin:6px 0 2px}
+.icons svg{width:38px;height:38px;opacity:.9}
+.ev .ic{width:46px;height:46px;color:var(--gold);margin:0 auto 12px;display:block}
+.ev .detail{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--ink);margin-bottom:8px}
+.ev .jour{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--ink)}
 footer{padding:50px 24px 80px;text-align:center;color:var(--muted);font-size:.72rem;letter-spacing:.35em;text-transform:uppercase;border-top:1px solid var(--line);max-width:780px;margin:0 auto}
 @media(min-width:700px){.cards{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){*{transition-duration:.01s!important;transition-delay:0s!important}}
@@ -102,15 +108,27 @@ footer{padding:50px 24px 80px;text-align:center;color:var(--muted);font-size:.72
 <script>
 const CONFIG = {
   garcon: "Raphaël",
-  famille: "NOM DE FAMILLE",            // ← à remplir
+  famille: "",                           // ← nom de famille (facultatif)
   parents: "Sandrine et Fabrice",
-  dateISO: "2027-01-01T11:00:00",       // ← date et heure de la cérémonie
-  dateTexte: "Date à confirmer",        // ← ex. « Samedi 12 décembre 2026 »
+  dateISO: "2027-05-03T08:30:00",       // compte à rebours : mise des tefilines
+  dateTexte: "3 mai & 30 mai 2027",
   hebreu: "",                            // ← date hébraïque (facultatif)
   evenements: [
-    {titre:"La Cérémonie", quand:"Date et heure à confirmer", lieu:"Synagogue — adresse à confirmer", waze:""},
-    {titre:"La Réception", quand:"Date et heure à confirmer", lieu:"Lieu — adresse à confirmer", waze:""}
+    {icone:"tefilines", titre:"Mise des Tefilines", jour:"Lundi 3 mai 2027", heure:"8h30",
+     detail:"Suivie d'un petit déjeuner",
+     lieu:"14, allée des Rouges-Gorges<br>95350 Saint-Brice-sous-Forêt",
+     waze:"https://waze.com/ul?q=14%20all%C3%A9e%20des%20Rouges-Gorges%2095350%20Saint-Brice-sous-For%C3%AAt&navigate=yes"},
+    {icone:"torah", titre:"La Fête", jour:"Dimanche 30 mai 2027", heure:"À partir de 12h30",
+     detail:"",
+     lieu:"Centre communautaire Berechit<br>Avenue Paul Valéry<br>95200 Sarcelles",
+     waze:"https://waze.com/ul?q=Centre%20communautaire%20Berechit%20Avenue%20Paul%20Val%C3%A9ry%2095200%20Sarcelles&navigate=yes"}
   ]
+};
+// Petits dessins (traits dorés)
+const ICONS = {
+  tefilines:`<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="22" y="8" width="20" height="20" rx="2"/><rect x="27" y="13" width="10" height="10" rx="1"/><path d="M26 28c-2 8-8 12-8 22M38 28c2 8 8 12 8 22M18 50l-3 6M46 50l3 6M30 28v10m4-10v10"/></svg>`,
+  torah:`<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8l3-3 3 3 4-4 4 4 3-3 3 3"/><rect x="14" y="12" width="6" height="42" rx="3"/><rect x="44" y="12" width="6" height="42" rx="3"/><path d="M20 16h24M20 50h24M26 24h12M26 30h12M26 36h12M26 42h12"/></svg>`,
+  synagogue:`<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 56h48M12 56V28l20-16 20 16v28"/><path d="M26 56V42a6 6 0 0 1 12 0v14"/><path d="M32 18l-4 7h8zM32 30l4-7h-8z" stroke-width="1.6"/><path d="M4 56V36l6-5M60 56V36l-6-5"/></svg>`
 };
 const params = new URLSearchParams(location.search);
 const GUEST = params.get("invite") || "Prénom(s) NOM";
@@ -126,6 +144,7 @@ const GUEST = params.get("invite") || "Prénom(s) NOM";
     <div class="env">
       <div class="env-back"></div>
       <div class="card">
+        <span class="cic" id="cardIcon"></span>
         <small>Bar Mitsva</small>
         <b id="cardName"></b>
         <i>Vous êtes invités</i>
@@ -143,7 +162,7 @@ const GUEST = params.get("invite") || "Prénom(s) NOM";
   <section class="hero">
     <div class="frame"></div>
     <div class="bsd">בס״ד</div>
-    <svg class="star" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="50,8 88,72 12,72"/><polygon points="50,92 12,28 88,28"/></svg>
+    <div class="icons" id="heroIcons"></div>
     <div class="eyebrow">Bar Mitsva</div>
     <h1><em>de</em><span id="heroName"></span></h1>
     <div class="line"></div>
@@ -159,7 +178,7 @@ const GUEST = params.get("invite") || "Prénom(s) NOM";
     <div class="cards" id="cards"></div>
   </section>
 
-  <footer><span id="sonFoot"></span> · <span id="fam"></span></footer>
+  <footer><span id="sonFoot"></span><span id="fam"></span></footer>
 </main>
 
 <script>
@@ -171,14 +190,19 @@ $("heroName").textContent = CONFIG.garcon;
 $("son").textContent = CONFIG.garcon;
 $("sonFoot").textContent = CONFIG.garcon;
 $("parents").textContent = CONFIG.parents;
-$("fam").textContent = CONFIG.famille;
+$("fam").textContent = CONFIG.famille ? " · " + CONFIG.famille : "";
 $("heroDate").textContent = CONFIG.dateTexte;
 $("heroHeb").textContent = CONFIG.hebreu;
 
+$("cardIcon").innerHTML = ICONS.tefilines;
+$("heroIcons").innerHTML = ICONS.tefilines + ICONS.synagogue + ICONS.torah;
 $("cards").innerHTML = CONFIG.evenements.map(e => `
   <div class="ev">
+    <span class="ic">${ICONS[e.icone]||""}</span>
     <h3>${e.titre}</h3>
-    <p class="when">${e.quand}</p>
+    <p class="jour">${e.jour}</p>
+    <p class="when">${e.heure}</p>
+    ${e.detail ? `<p class="detail">${e.detail}</p>` : ""}
     <p>${e.lieu}</p>
     ${e.waze ? `<a href="${e.waze}" target="_blank" rel="noopener">Ouvrir dans Waze</a>` : ""}
   </div>`).join("");
