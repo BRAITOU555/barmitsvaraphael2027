@@ -599,6 +599,19 @@ body.go #intro .floor{animation:spotOn 2s ease-out 1s forwards}
 body.go .scene{animation:lantern 2.4s .5s cubic-bezier(.25,.7,.3,1) backwards,bob 3.8s 3s ease-in-out infinite!important}
 body.go .scene.open{animation:none!important}
 #intro .dust{top:-24px;bottom:auto;animation-name:fall!important}
+
+/* ===== Rideau n°5 : le tallit "Bar Mitsva Raphaël" qui s'ouvre en deux ===== */
+#pro .rod,#pro .rings,#pro .pelmet,#pro .pelmet-trim,#pro .tas,#pro .tie,#pro .par .fr,#pro .par::after{display:none!important}
+#pro .par{width:50.1%;overflow:hidden;box-shadow:none;background:#fdfbf4;transition:transform 3.4s cubic-bezier(.65,0,.25,1)!important}
+#pro .par.pl{left:0;transform-origin:50% 50%}#pro .par.pr{right:0;transform-origin:50% 50%}
+#pro .par .orn{width:199.6%;background:url(rideau.jpg) center 42%/cover no-repeat!important}
+#pro .par.pl .orn{left:0}#pro .par.pr .orn{right:0}
+#pro.open .par.pl{transform:translateX(-102%)!important}
+#pro.open .par.pr{transform:translateX(102%)!important}
+#pro .par.pl{box-shadow:inset -14px 0 22px -14px rgba(40,30,10,.0)}
+#pro.open .par{filter:drop-shadow(0 0 18px rgba(30,20,5,.35))}
+#pro .gate{padding-bottom:5vh;z-index:9}
+#pro .gate .gtxt{color:#13307a;font-weight:500;letter-spacing:.38em;font-size:.7rem;text-shadow:0 1px 6px rgba(255,255,255,.9)}
 </style>
 </head>
 <body class="locked">
