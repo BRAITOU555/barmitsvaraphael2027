@@ -1079,10 +1079,20 @@ const FW=(()=>{
     setTimeout(()=>pro.remove(),1500) }
 
   // la vidéo est déjà en lecture (muette, cachée derrière le rideau) : on la révèle, on la remet à 0 et on active le son
+  let needTap=false, snd=null;
+  function playSound(){ needTap=false; if(snd){snd.remove();snd=null}
+    vid.muted=false; vid.volume=1; try{vid.currentTime=0}catch(e){}
+    const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(finish) }); startWatchdog() }
+  function askTap(){ if(needTap||done) return; needTap=true; clearInterval(wd); try{vid.pause();vid.currentTime=0}catch(e){}
+    snd=document.createElement("button"); snd.type="button"; snd.textContent="🔊  Touche pour lancer la vidéo";
+    snd.style.cssText="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:5;padding:14px 22px;border-radius:999px;border:1px solid #e3bf62;background:rgba(10,18,40,.85);color:#f3dfa0;font:600 16px system-ui,sans-serif;letter-spacing:.02em";
+    snd.onclick=playSound; vid.parentNode.appendChild(snd) }
+  // la vidéo tourne déjà (muette, cachée derrière le rideau) : on la révèle ; si le navigateur refuse le son, on demande un toucher
   function reveal(){ if(revealed||done) return; revealed=true; phase="play"; pro.classList.remove("wait"); pro.classList.add("vid","play");
     vid.loop=false; try{vid.currentTime=0}catch(e){}
     vid.muted=false; vid.volume=1;
-    const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(finish) });
+    const p=vid.play(); if(p&&p.catch) p.catch(askTap);
+    setTimeout(()=>{ if(!done&&!needTap&&(vid.paused||vid.muted)) askTap() },400);
     startWatchdog() }
   function tryReveal(){ if(revealed||done||!curtainDone) return;
     if(vid.readyState>=3){ reveal() } else { pro.classList.add("wait") } }
@@ -1090,13 +1100,13 @@ const FW=(()=>{
 
   // filets de sécurité : ne jamais rester bloqué
   function startWatchdog(){ clearInterval(wd); lastT=-1; stuckSince=0;
-    wd=setInterval(()=>{ if(done) return;
+    wd=setInterval(()=>{ if(done||needTap) return;
       if(vid.ended || (vid.duration && vid.duration-vid.currentTime<1)){ finish(); return }
       if(vid.paused){ const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(()=>{}) }) }
       const t=vid.currentTime; if(t>lastT+0.05){ lastT=t; stuckSince=0 } else { stuckSince+=250; if(stuckSince>9000) finish() }   // figée plus de 9 s -> on passe à la suite
     },250) }
   vid.addEventListener("ended",()=>{ if(revealed) finish() });
-  vid.addEventListener("pause",()=>{ if(revealed&&!done&&!vid.ended){ const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(()=>{}) }) } });
+  vid.addEventListener("pause",()=>{ if(revealed&&!done&&!needTap&&!vid.ended){ const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(()=>{}) }) } });
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&revealed&&!done&&vid.paused) vid.play().catch(()=>{}) });
   $("proSkip").onclick=()=>{ if(!revealed&&!tapped) return; finish() };
 
@@ -1114,7 +1124,7 @@ const FW=(()=>{
   const auto=()=>setTimeout(openCurtain,900);
   document.readyState==="complete"?auto():addEventListener("load",auto);
   setTimeout(openCurtain,4000);
-  const firstTouch=()=>{ try{MUS.unlock(); FW.unlock()}catch(e){}; if(revealed&&!done&&vid.muted){ vid.muted=false; vid.volume=1 } };
+  const firstTouch=()=>{ try{MUS.unlock(); FW.unlock()}catch(e){}; if(revealed&&!done&&!needTap&&vid.muted){ vid.muted=false; vid.volume=1 } };
   ["pointerdown","touchstart","keydown"].forEach(ev=>addEventListener(ev,firstTouch,{passive:true}));
 })();
 
