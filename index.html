@@ -1100,15 +1100,22 @@ const FW=(()=>{
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&revealed&&!done&&vid.paused) vid.play().catch(()=>{}) });
   $("proSkip").onclick=()=>{ if(!revealed&&!tapped) return; finish() };
 
-  $("proGate").onclick=()=>{ if(tapped) return; tapped=true; phase="curtain";
-    MUS.unlock(); FW.unlock();
+  function openCurtain(){ if(tapped) return; tapped=true; phase="curtain";
+    try{MUS.unlock(); FW.unlock()}catch(e){}
     pro.classList.add("open");
     vid.muted=true; vid.loop=true; const p=vid.play(); if(p&&p.catch) p.catch(()=>{});   // lancé DANS le geste (autorise le son ensuite), muet et caché derrière le rideau
     const pl=pro.querySelector(".par.pl");
     pl.addEventListener("transitionend",e=>{ if(e.target===pl&&e.propertyName==="transform"){ curtainDone=true; tryReveal() } });
     setTimeout(()=>{ curtainDone=true; tryReveal() },4200);     // filet si l'animation ne signale pas sa fin
     setTimeout(()=>{ if(!revealed&&!done) finish() },15000);    // vidéo introuvable/trop lente : on passe à l'enveloppe
-  };
+  }
+  $("proGate").onclick=openCurtain;
+  // le rideau s'ouvre tout seul ; le premier toucher (où que ce soit) active le son
+  const auto=()=>setTimeout(openCurtain,900);
+  document.readyState==="complete"?auto():addEventListener("load",auto);
+  setTimeout(openCurtain,4000);
+  const firstTouch=()=>{ try{MUS.unlock(); FW.unlock()}catch(e){}; if(revealed&&!done&&vid.muted){ vid.muted=false; vid.volume=1 } };
+  ["pointerdown","touchstart","keydown"].forEach(ev=>addEventListener(ev,firstTouch,{passive:true}));
 })();
 
 /* ---------- Ouverture ---------- */
