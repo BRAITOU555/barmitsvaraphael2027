@@ -629,6 +629,14 @@ body.go .scene.open{animation:none!important}
 #intro.night .scene .seal{box-shadow:0 6px 14px rgba(0,10,50,.55),inset 0 0 0 3px #e3bf62,inset 0 0 0 5px rgba(13,36,104,.9),inset 0 0 0 6px rgba(243,220,152,.5)}
 @keyframes ring{0%{box-shadow:0 6px 14px rgba(0,10,50,.55),inset 0 0 0 3px #e3bf62,inset 0 0 0 5px rgba(13,36,104,.9),0 0 0 0 rgba(232,195,92,.75)}100%{box-shadow:0 6px 14px rgba(0,10,50,.55),inset 0 0 0 3px #e3bf62,inset 0 0 0 5px rgba(13,36,104,.9),0 0 0 26px rgba(232,195,92,0)}}
 .scene.out .env-str,.scene.out .env-sheen{opacity:0;transform:translateY(70px) scale(.96);transition:opacity .9s ease,transform .9s ease}
+
+#pro .frame{position:relative}
+#pro .ploader{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:none;gap:8px;z-index:3}
+#pro .ploader i{width:9px;height:9px;border-radius:50%;background:#e3bf62;animation:pl 1s ease-in-out infinite}
+#pro .ploader i:nth-child(2){animation-delay:.15s}#pro .ploader i:nth-child(3){animation-delay:.3s}
+@keyframes pl{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
+#pro.wait .ploader{display:flex}
+#pro.wait .frame{display:block}
 </style>
 </head>
 <body class="locked">
@@ -664,10 +672,10 @@ const CONFIG = {
   ]
 };
 const params = new URLSearchParams(location.search);
-const GUEST = params.get("invite") || "Prénom(s) NOM";
+const GUEST = (params.get("invite") || "").trim().slice(0,140) || "Prénom(s) NOM";
 const GUEST_ID = params.get("id") || "";
 // nombre maximum de personnes : ?n=3 sinon nombre de prénoms (séparés par virgule ou « et »)
-const MAXP = Math.max(1, parseInt(params.get("n")) || GUEST.split(/,|\bet\b/i).length);
+const MAXP = Math.min(20, Math.max(1, parseInt(params.get("n")) || GUEST.split(/,|\bet\b/i).length));
 </script>
 <!-- ================================== -->
 
@@ -697,7 +705,7 @@ const ART = {
 <div id="pro">
   <div class="stage">
     <div class="ptitle">Bar Mitsva de Raphaël</div>
-    <div class="frame"><video id="proVid" playsinline webkit-playsinline preload="auto"><source src="ouverture.mp4" type="video/mp4"><source src="ouverture.webm" type="video/webm"></video></div>
+    <div class="frame"><video id="proVid" playsinline webkit-playsinline muted preload="auto" poster="ouverture-poster.jpg"></video><div class="ploader" aria-hidden="true"><i></i><i></i><i></i></div></div>
     <button class="skip" id="proSkip" type="button">Passer</button>
   </div>
   <div class="flash"></div>
@@ -1044,28 +1052,63 @@ const FW=(()=>{
     d.style.animationDuration=(5+Math.random()*5)+"s"; d.style.animationDelay=(Math.random()*6)+"s"; it.appendChild(d) } })();
 
 
-/* ---------- Prologue : film puis arrivée ---------- */
-(()=>{ $("intro").classList.add("night"); const pro=$("pro"),vid=$("proVid"); let done=false;
-  function finish(){ if(done) return; done=true;
-    pro.style.transition="opacity 1s ease, visibility 1s"; document.body.classList.add("go"); pro.classList.add("gone");   // fondu de 2 s : l'enveloppe apparaît dessous
-    const v0=vid.volume,t0=performance.now(); const fv=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/1000); try{vid.volume=v0*(1-k)}catch(e){} if(k>=1){clearInterval(fv);try{vid.pause()}catch(e){}} },50);
-    setTimeout(()=>pro.remove(),1400) }
-  if(new URLSearchParams(location.search).has("skip") || !vid.canPlayType || (!vid.canPlayType("video/mp4")&&!vid.canPlayType("video/webm"))){ pro.remove(); document.body.classList.add("go"); return }
-  vid.addEventListener("error",e=>{ if(e.target!==vid) return; if(!done){ pro.classList.contains("open")?finish():(pro.remove(),document.body.classList.add("go"),done=true) } });
-  const srcs=vid.querySelectorAll("source"); srcs[srcs.length-1].addEventListener("error",()=>{ if(!done){ pro.classList.contains("open")?finish():(pro.remove(),document.body.classList.add("go"),done=true) } });
-  vid.addEventListener("ended",finish);
-  vid.addEventListener("timeupdate",()=>{ if(vid.duration&&vid.duration-vid.currentTime<1) finish() });
-  $("proSkip").onclick=finish;
-  let started=false;
-  function startVideo(){ if(started||done) return; started=true; pro.classList.add("vid","play");
-    vid.muted=false; vid.volume=1; try{vid.currentTime=0}catch(e){}
-    vid.play().catch(()=>{ vid.muted=true; vid.play().catch(finish) }) }
-  $("proGate").onclick=()=>{ MUS.unlock(); FW.unlock();
+/* ---------- Prologue : rideau -> film -> arrivée (version robuste) ---------- */
+(()=>{
+  const intro=$("intro"), pro=$("pro"), vid=$("proVid"), body=document.body;
+  intro.classList.add("night");
+  let phase="gate", done=false, curtainDone=false, revealed=false, tapped=false, lastT=-1, stuckSince=0, wd=null;
+  const SKIP=new URLSearchParams(location.search).has("skip");
+  function skipAll(){ if(done) return; done=true; clearInterval(wd); try{vid.pause()}catch(e){}; pro.remove(); body.classList.add("go") }
+  // source vidéo choisie une seule fois, selon ce que le navigateur sait lire
+  function pickSrc(){
+    const mp4=vid.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')||vid.canPlayType("video/mp4");
+    const webm=vid.canPlayType('video/webm; codecs="vp9, opus"')||vid.canPlayType("video/webm");
+    return mp4?"ouverture.mp4":(webm?"ouverture.webm":"");
+  }
+  const list=["ouverture.mp4","ouverture.webm"]; if(pickSrc()==="ouverture.webm") list.reverse();
+  if(SKIP){ skipAll(); return }
+  let si=0;
+  function load(){ vid.muted=true; vid.loop=true; vid.src=list[si]; vid.load() }     // préchargement dès l'arrivée sur la page
+  load();
+  vid.addEventListener("error",()=>{ if(done) return; if(si<list.length-1){ si++; load(); if(tapped){ const p=vid.play(); if(p&&p.catch) p.catch(()=>{}) } return } phase==="gate"?skipAll():finish() });
+
+  function finish(){ if(done) return; done=true; clearInterval(wd);
+    pro.classList.remove("wait");
+    pro.style.transition="opacity 1s ease, visibility 1s"; body.classList.add("go"); pro.classList.add("gone");   // fondu 1 s : l'enveloppe apparaît dessous
+    const v0=vid.muted?0:vid.volume,t0=performance.now(); const fv=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/1000); try{vid.volume=v0*(1-k)}catch(e){} if(k>=1){clearInterval(fv);try{vid.pause()}catch(e){}} },50);
+    setTimeout(()=>pro.remove(),1500) }
+
+  // la vidéo est déjà en lecture (muette, cachée derrière le rideau) : on la révèle, on la remet à 0 et on active le son
+  function reveal(){ if(revealed||done) return; revealed=true; phase="play"; pro.classList.remove("wait"); pro.classList.add("vid","play");
+    vid.loop=false; try{vid.currentTime=0}catch(e){}
+    vid.muted=false; vid.volume=1;
+    const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(finish) });
+    startWatchdog() }
+  function tryReveal(){ if(revealed||done||!curtainDone) return;
+    if(vid.readyState>=3){ reveal() } else { pro.classList.add("wait") } }
+  vid.addEventListener("canplay",tryReveal); vid.addEventListener("canplaythrough",tryReveal); vid.addEventListener("loadeddata",tryReveal);
+
+  // filets de sécurité : ne jamais rester bloqué
+  function startWatchdog(){ clearInterval(wd); lastT=-1; stuckSince=0;
+    wd=setInterval(()=>{ if(done) return;
+      if(vid.ended || (vid.duration && vid.duration-vid.currentTime<1)){ finish(); return }
+      if(vid.paused){ const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(()=>{}) }) }
+      const t=vid.currentTime; if(t>lastT+0.05){ lastT=t; stuckSince=0 } else { stuckSince+=250; if(stuckSince>9000) finish() }   // figée plus de 9 s -> on passe à la suite
+    },250) }
+  vid.addEventListener("ended",()=>{ if(revealed) finish() });
+  vid.addEventListener("pause",()=>{ if(revealed&&!done&&!vid.ended){ const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(()=>{}) }) } });
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&revealed&&!done&&vid.paused) vid.play().catch(()=>{}) });
+  $("proSkip").onclick=()=>{ if(!revealed&&!tapped) return; finish() };
+
+  $("proGate").onclick=()=>{ if(tapped) return; tapped=true; phase="curtain";
+    MUS.unlock(); FW.unlock();
     pro.classList.add("open");
-    // autorisation du geste, en SILENCE : la vidéo ne joue ni son ni image avant l'ouverture complète du rideau
-    vid.muted=true; const p=vid.play(); if(p&&p.then) p.then(()=>{ if(!started){ vid.pause(); try{vid.currentTime=0}catch(e){} } }).catch(()=>{});
-    const pl=pro.querySelector(".par.pl"); pl.addEventListener("transitionend",e=>{ if(e.target===pl&&e.propertyName==="transform") setTimeout(startVideo,250) });
-    setTimeout(startVideo,4300); };   // filet de sécurité
+    vid.muted=true; vid.loop=true; const p=vid.play(); if(p&&p.catch) p.catch(()=>{});   // lancé DANS le geste (autorise le son ensuite), muet et caché derrière le rideau
+    const pl=pro.querySelector(".par.pl");
+    pl.addEventListener("transitionend",e=>{ if(e.target===pl&&e.propertyName==="transform"){ curtainDone=true; tryReveal() } });
+    setTimeout(()=>{ curtainDone=true; tryReveal() },4200);     // filet si l'animation ne signale pas sa fin
+    setTimeout(()=>{ if(!revealed&&!done) finish() },15000);    // vidéo introuvable/trop lente : on passe à l'enveloppe
+  };
 })();
 
 /* ---------- Ouverture ---------- */
@@ -1109,6 +1152,9 @@ function tick(){
   $("mini").innerHTML = [[j,"Jours"],[h,"H"],[m,"M"],[s,"S"]].map(([v,l])=>`<div><b>${p(v)}</b><span>${l}</span></div>`).join("");
 }
 tick(); setInterval(tick, 1000);
+
+/* robustesse : retour arrière / page restaurée depuis le cache -> on repart de zéro */
+addEventListener("pageshow",e=>{ if(e.persisted) location.reload() });
 </script>
 </body>
 </html>
