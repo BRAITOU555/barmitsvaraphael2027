@@ -1083,16 +1083,13 @@ const FW=(()=>{
   function playSound(){ needTap=false; if(snd){snd.remove();snd=null}
     vid.muted=false; vid.volume=1; try{vid.currentTime=0}catch(e){}
     const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(finish) }); startWatchdog() }
-  function askTap(){ if(needTap||done) return; needTap=true; clearInterval(wd); try{vid.pause();vid.currentTime=0}catch(e){}
-    snd=document.createElement("button"); snd.type="button"; snd.textContent="🔊  Touche pour lancer la vidéo";
-    snd.style.cssText="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:5;padding:14px 22px;border-radius:999px;border:1px solid #e3bf62;background:rgba(10,18,40,.85);color:#f3dfa0;font:600 16px system-ui,sans-serif;letter-spacing:.02em";
-    snd.onclick=playSound; vid.parentNode.appendChild(snd) }
+  function askTap(){ if(done) return; vid.muted=true; const p=vid.play(); if(p&&p.catch) p.catch(()=>{}) }   // son refusé : lecture muette, le 1er toucher réactive le son
   // la vidéo tourne déjà (muette, cachée derrière le rideau) : on la révèle ; si le navigateur refuse le son, on demande un toucher
   function reveal(){ if(revealed||done) return; revealed=true; phase="play"; pro.classList.remove("wait"); pro.classList.add("vid","play");
     vid.loop=false; try{vid.currentTime=0}catch(e){}
     vid.muted=false; vid.volume=1;
     const p=vid.play(); if(p&&p.catch) p.catch(askTap);
-    setTimeout(()=>{ if(!done&&!needTap&&(vid.paused||vid.muted)) askTap() },400);
+    setTimeout(()=>{ if(!done&&vid.paused) askTap() },400);
     startWatchdog() }
   function tryReveal(){ if(revealed||done||!curtainDone) return;
     if(vid.readyState>=3){ reveal() } else { pro.classList.add("wait") } }
@@ -1120,8 +1117,11 @@ const FW=(()=>{
     setTimeout(()=>{ if(!revealed&&!done) finish() },15000);    // vidéo introuvable/trop lente : on passe à l'enveloppe
   }
   $("proGate").onclick=openCurtain;
-  // un seul toucher au départ (obligatoire pour avoir le son) : le rideau s'ouvre, puis la vidéo démarre seule avec le son
-  const firstTouch=()=>{ try{MUS.unlock(); FW.unlock()}catch(e){}; if(revealed&&!done&&!needTap&&vid.muted){ vid.muted=false; vid.volume=1 } };
+  // tout démarre seul : rideau, puis vidéo (avec le son si le navigateur l'autorise, sinon muette jusqu'au 1er toucher)
+  const auto=()=>setTimeout(openCurtain,700);
+  document.readyState==="complete"?auto():addEventListener("load",auto);
+  setTimeout(openCurtain,3500);
+  const firstTouch=()=>{ try{MUS.unlock(); FW.unlock()}catch(e){}; if(revealed&&!done&&vid.muted){ vid.muted=false; vid.volume=1; if(vid.paused) vid.play().catch(()=>{}) } };
   ["pointerdown","touchstart","keydown"].forEach(ev=>addEventListener(ev,firstTouch,{passive:true}));
 })();
 
