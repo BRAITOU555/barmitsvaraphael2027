@@ -637,6 +637,9 @@ body.go .scene.open{animation:none!important}
 @keyframes pl{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
 #pro.wait .ploader{display:flex}
 #pro.wait .frame{display:block}
+
+#pro .gate{padding-bottom:9vh!important}
+#pro .gate .gtxt{display:inline-block;padding:15px 30px;border-radius:999px;font-size:.78rem!important;letter-spacing:.26em!important;font-weight:600!important;color:#fff4cf!important;background:linear-gradient(180deg,rgba(14,32,84,.78),rgba(8,18,54,.82));border:1px solid rgba(238,205,120,.85);box-shadow:0 8px 26px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,236,170,.2);text-shadow:0 1px 4px rgba(0,0,0,.6)!important}
 </style>
 </head>
 <body class="locked">
@@ -714,7 +717,7 @@ const ART = {
   <div class="rod"></div><div class="pelmet-trim"></div><i class="tas t1"></i><i class="tas t2"></i><i class="tas t3"></i><i class="tas t4"></i><div class="pelmet"></div><div class="tie tl"></div><div class="tie tr"></div>
   <div class="cur cl"></div><div class="cur cr"></div>
   <button class="gate" id="proGate" type="button" aria-label="Ouvrir">
-    <span class="gbsd">בס״ד</span><span class="gseal">R</span><span class="gtxt">Touchez pour entrer</span>
+    <span class="gbsd">בס״ד</span><span class="gseal">R</span><span class="gtxt">Touchez pour ouvrir le rideau</span>
   </button>
 </div>
 <canvas id="fw"></canvas>
@@ -1122,10 +1125,7 @@ const FW=(()=>{
     setTimeout(()=>{ if(!revealed&&!done) finish() },15000);    // vidéo introuvable/trop lente : on passe à l'enveloppe
   }
   $("proGate").onclick=openCurtain;
-  // tout démarre seul : rideau, puis vidéo (avec le son si le navigateur l'autorise, sinon muette jusqu'au 1er toucher)
-  const auto=()=>setTimeout(openCurtain,700);
-  document.readyState==="complete"?auto():addEventListener("load",auto);
-  setTimeout(openCurtain,3500);
+  // un toucher au départ (indispensable pour le son) : le rideau s'ouvre, puis la vidéo démarre seule avec le son
   const firstTouch=()=>{ try{MUS.unlock(); FW.unlock()}catch(e){}; if(revealed&&!done&&vid.muted){ hidePill(); vid.muted=false; vid.volume=1; if(vid.paused) vid.play().catch(()=>{}) } };
   ["pointerdown","touchstart","keydown"].forEach(ev=>addEventListener(ev,firstTouch,{passive:true}));
 })();
