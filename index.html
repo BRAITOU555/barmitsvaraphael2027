@@ -1120,10 +1120,7 @@ const FW=(()=>{
     setTimeout(()=>{ if(!revealed&&!done) finish() },15000);    // vidéo introuvable/trop lente : on passe à l'enveloppe
   }
   $("proGate").onclick=openCurtain;
-  // le rideau s'ouvre tout seul ; le premier toucher (où que ce soit) active le son
-  const auto=()=>setTimeout(openCurtain,900);
-  document.readyState==="complete"?auto():addEventListener("load",auto);
-  setTimeout(openCurtain,4000);
+  // un seul toucher au départ (obligatoire pour avoir le son) : le rideau s'ouvre, puis la vidéo démarre seule avec le son
   const firstTouch=()=>{ try{MUS.unlock(); FW.unlock()}catch(e){}; if(revealed&&!done&&!needTap&&vid.muted){ vid.muted=false; vid.volume=1 } };
   ["pointerdown","touchstart","keydown"].forEach(ev=>addEventListener(ev,firstTouch,{passive:true}));
 })();
