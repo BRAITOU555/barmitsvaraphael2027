@@ -1072,7 +1072,7 @@ const FW=(()=>{
   load();
   vid.addEventListener("error",()=>{ if(done) return; if(si<list.length-1){ si++; load(); if(tapped){ const p=vid.play(); if(p&&p.catch) p.catch(()=>{}) } return } phase==="gate"?skipAll():finish() });
 
-  function finish(){ if(done) return; done=true; clearInterval(wd);
+  function finish(){ if(done) return; done=true; clearInterval(wd); hidePill();
     pro.classList.remove("wait");
     pro.style.transition="opacity 1s ease, visibility 1s"; body.classList.add("go"); pro.classList.add("gone");   // fondu 1 s : l'enveloppe apparaît dessous
     const v0=vid.muted?0:vid.volume,t0=performance.now(); const fv=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/1000); try{vid.volume=v0*(1-k)}catch(e){} if(k>=1){clearInterval(fv);try{vid.pause()}catch(e){}} },50);
@@ -1083,13 +1083,18 @@ const FW=(()=>{
   function playSound(){ needTap=false; if(snd){snd.remove();snd=null}
     vid.muted=false; vid.volume=1; try{vid.currentTime=0}catch(e){}
     const p=vid.play(); if(p&&p.catch) p.catch(()=>{ vid.muted=true; vid.play().catch(finish) }); startWatchdog() }
-  function askTap(){ if(done) return; vid.muted=true; const p=vid.play(); if(p&&p.catch) p.catch(()=>{}) }   // son refusé : lecture muette, le 1er toucher réactive le son
+  let pill=null;
+  function showPill(){ if(pill||done) return; pill=document.createElement("div"); pill.textContent="🔊 Touche l'écran pour le son";
+    pill.style.cssText="position:absolute;left:50%;bottom:7%;transform:translateX(-50%);z-index:5;padding:9px 16px;border-radius:999px;background:rgba(10,18,40,.6);border:1px solid rgba(227,191,98,.6);color:#f3dfa0;font:500 14px system-ui,sans-serif;pointer-events:none;animation:pl 1.6s ease-in-out infinite";
+    pro.appendChild(pill) }
+  function hidePill(){ if(pill){pill.remove();pill=null} }
+  function askTap(){ if(done) return; showPill(); vid.muted=true; const p=vid.play(); if(p&&p.catch) p.catch(()=>{}) }   // son refusé : lecture muette, le 1er toucher réactive le son
   // la vidéo tourne déjà (muette, cachée derrière le rideau) : on la révèle ; si le navigateur refuse le son, on demande un toucher
   function reveal(){ if(revealed||done) return; revealed=true; phase="play"; pro.classList.remove("wait"); pro.classList.add("vid","play");
     vid.loop=false; try{vid.currentTime=0}catch(e){}
     vid.muted=false; vid.volume=1;
     const p=vid.play(); if(p&&p.catch) p.catch(askTap);
-    setTimeout(()=>{ if(!done&&vid.paused) askTap() },400);
+    setTimeout(()=>{ if(!done&&(vid.paused||vid.muted)) askTap() },400);
     startWatchdog() }
   function tryReveal(){ if(revealed||done||!curtainDone) return;
     if(vid.readyState>=3){ reveal() } else { pro.classList.add("wait") } }
@@ -1121,7 +1126,7 @@ const FW=(()=>{
   const auto=()=>setTimeout(openCurtain,700);
   document.readyState==="complete"?auto():addEventListener("load",auto);
   setTimeout(openCurtain,3500);
-  const firstTouch=()=>{ try{MUS.unlock(); FW.unlock()}catch(e){}; if(revealed&&!done&&vid.muted){ vid.muted=false; vid.volume=1; if(vid.paused) vid.play().catch(()=>{}) } };
+  const firstTouch=()=>{ try{MUS.unlock(); FW.unlock()}catch(e){}; if(revealed&&!done&&vid.muted){ hidePill(); vid.muted=false; vid.volume=1; if(vid.paused) vid.play().catch(()=>{}) } };
   ["pointerdown","touchstart","keydown"].forEach(ev=>addEventListener(ev,firstTouch,{passive:true}));
 })();
 
