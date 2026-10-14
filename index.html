@@ -1118,7 +1118,7 @@ const FW=(()=>{
   function openCurtain(){ if(tapped) return; tapped=true; phase="curtain";
     try{MUS.unlock(); FW.unlock()}catch(e){}
     pro.classList.add("open");
-    vid.muted=true; vid.loop=true; const p=vid.play(); if(p&&p.catch) p.catch(()=>{});   // lancé DANS le geste (autorise le son ensuite), muet et caché derrière le rideau
+    vid.muted=true; vid.loop=false; const p=vid.play(); if(p&&p.then) p.then(()=>{ if(!revealed){ vid.pause(); try{vid.currentTime=0}catch(e){} } }).catch(()=>{});   // lancé DANS le geste (autorise le son ensuite), muet et caché derrière le rideau
     const pl=pro.querySelector(".par.pl");
     pl.addEventListener("transitionend",e=>{ if(e.target===pl&&e.propertyName==="transform"){ curtainDone=true; tryReveal() } });
     setTimeout(()=>{ curtainDone=true; tryReveal() },4200);     // filet si l'animation ne signale pas sa fin
